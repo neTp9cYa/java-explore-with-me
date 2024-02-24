@@ -8,5 +8,6 @@ import ru.practicum.stats.server.model.Hit;
 public interface StatService {
 
     Hit addHit(final HitCreateDto hitCreateDto);
+
     List<StatItemViewDto> getStats();
 }
