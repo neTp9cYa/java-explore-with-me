@@ -1,7 +1,7 @@
 package ru.practicum.stats.server.service;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.stat.dto.HitCreateDto;
+import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.server.model.Hit;
 
 @Component

@@ -1,6 +1,7 @@
 package ru.practicum.stats.server.model;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +33,6 @@ public class Hit {
     private String ip;
 
     @Column(name = "timestamp", nullable = false)
-    private Instant timestamp;
+    private LocalDateTime timestamp;
 
 }

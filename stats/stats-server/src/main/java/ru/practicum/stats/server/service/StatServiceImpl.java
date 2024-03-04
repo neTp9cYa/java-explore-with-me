@@ -1,11 +1,13 @@
 package ru.practicum.stats.server.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.stat.dto.HitCreateDto;
-import ru.practicum.stat.dto.StatItemViewDto;
+import ru.practicum.stats.dto.HitCreateDto;
+import ru.practicum.stats.dto.StatItemViewDto;
 import ru.practicum.stats.server.model.Hit;
 import ru.practicum.stats.server.repository.HitRepository;
 
@@ -24,7 +26,17 @@ public class StatServiceImpl implements StatService {
     }
 
     @Override
-    public List<StatItemViewDto> getStats() {
-        return new ArrayList<StatItemViewDto>();
+    public List<StatItemViewDto> getStats(final LocalDateTime start,
+                                          final LocalDateTime end,
+                                          final Optional<List<String>> urisOptional,
+                                          final Boolean unique) {
+
+        return unique
+            ? (urisOptional.isEmpty()
+                ? hitRepository.getUniqueHitsStats(start, end, urisOptional.get())
+                : hitRepository.getUniqueHitsStats(start, end))
+            : (urisOptional.isEmpty()
+                ? hitRepository.getHitsStats(start, end)
+                : hitRepository.getHitsStats(start, end, urisOptional.orElse(null)));
     }
 }
