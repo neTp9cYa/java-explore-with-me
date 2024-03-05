@@ -2,7 +2,6 @@ package ru.practicum.stats.server.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,6 +17,7 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
         "ORDER BY count(h.ip) DESC")
     List<StatItemViewDto> getHitsStats(final LocalDateTime start,
                                        final LocalDateTime end);
+
     @Query("SELECT new ru.practicum.stats.dto.StatItemViewDto(h.app, h.uri, count(h.ip)) " +
         "FROM Hit h " +
         "WHERE (h.timestamp BETWEEN :start AND :end) AND (h.uri IN :urisOptional) " +

@@ -19,7 +19,7 @@ public class BaseClient {
     protected <TResponse> ResponseEntity<TResponse> get(
         final String path,
         final Map<String, Object> parameters,
-        final Class<TResponse> responseType) throws HttpStatusCodeException  {
+        final Class<TResponse> responseType) throws HttpStatusCodeException {
 
         return makeAndSendRequest(HttpMethod.GET, path, parameters, null, responseType);
     }
