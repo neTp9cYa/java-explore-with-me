@@ -1,7 +1,9 @@
 package ru.practicum.stats.client;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,13 +17,17 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.dto.StatItemViewDto;
 
+@Service
 public class StatsClient extends BaseClient {
+
+    final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public StatsClient(@Value("${stats-server.url}") final String serverUrl, final RestTemplateBuilder builder) {
         super(builder
@@ -34,38 +40,39 @@ public class StatsClient extends BaseClient {
         post("/hit", hitCreateDto, Object.class);
     }
 
-    public List<StatItemViewDto> getStats(final LocalDateTime start,
+    public StatItemViewDto[] getStats(final LocalDateTime start,
                                           final LocalDateTime end) throws HttpStatusCodeException  {
         return getStats(start, end, Optional.empty(), Optional.empty());
     }
 
-    public List<StatItemViewDto> getStats(final LocalDateTime start,
+    public StatItemViewDto[] getStats(final LocalDateTime start,
                                           final LocalDateTime end,
                                           final Boolean unique) throws HttpStatusCodeException {
         return getStats(start, end, Optional.empty(), Optional.of(unique));
     }
 
-    public List<StatItemViewDto> getStats(final LocalDateTime start,
+    public StatItemViewDto[] getStats(final LocalDateTime start,
                                           final LocalDateTime end,
                                           final List<String> uris) throws HttpStatusCodeException  {
         return getStats(start, end, Optional.of(uris), Optional.empty());
     }
 
-    public List<StatItemViewDto> getStats(final LocalDateTime start,
+    public StatItemViewDto[] getStats(final LocalDateTime start,
                                           final LocalDateTime end,
                                           final List<String> uris,
                                           final Boolean unique) throws HttpStatusCodeException  {
         return getStats(start, end, Optional.of(uris), Optional.of(unique));
     }
 
-    private List<StatItemViewDto> getStats(final LocalDateTime start,
+    private StatItemViewDto[] getStats(final LocalDateTime start,
                                            final LocalDateTime end,
                                            final Optional<List<String>> urisOptional,
                                            final Optional<Boolean> uniqueOptional) throws HttpStatusCodeException  {
-        final Map<String, Object> parameters = Map.of(
-            "start", start,
-            "end", end
-        );
+
+        final Map<String, Object> parameters = new HashMap<>(Map.of(
+            "start", start.format(DATE_TIME_FORMATTER),
+            "end", end.format(DATE_TIME_FORMATTER)
+        ));
         urisOptional.ifPresent(uris -> parameters.put("uris", String.join(",", uris)));
         uniqueOptional.ifPresent(unique -> parameters.put("unique", unique));
 
@@ -73,8 +80,7 @@ public class StatsClient extends BaseClient {
             .map(key -> String.format("%s={%s}", key, key))
             .collect(Collectors.joining("&", "stats?", ""));
 
-        final ResponseEntity<List<StatItemViewDto>> response = get(path, parameters,
-            (Class<List<StatItemViewDto>>) Collections.<StatItemViewDto>emptyList().getClass());
+        final ResponseEntity<StatItemViewDto[]> response = get(path, parameters, StatItemViewDto[].class);
 
         return response.getBody();
     }
