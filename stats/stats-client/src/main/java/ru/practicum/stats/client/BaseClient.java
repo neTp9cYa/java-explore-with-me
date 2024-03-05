@@ -16,30 +16,30 @@ import org.springframework.web.client.RestTemplate;
 public class BaseClient {
     protected final RestTemplate restTemplate;
 
-    protected <TResponse> ResponseEntity<TResponse> get(
+    protected <ResponseT> ResponseEntity<ResponseT> get(
         final String path,
         final Map<String, Object> parameters,
-        final Class<TResponse> responseType) throws HttpStatusCodeException {
+        final Class<ResponseT> responseType) throws HttpStatusCodeException {
 
         return makeAndSendRequest(HttpMethod.GET, path, parameters, null, responseType);
     }
 
-    protected <TRequest, TResponse> ResponseEntity<TResponse> post(
+    protected <RequestT, ResponseT> ResponseEntity<ResponseT> post(
         final String path,
-        final TResponse body,
-        final Class<TResponse> responseType) throws HttpStatusCodeException {
+        final ResponseT body,
+        final Class<ResponseT> responseType) throws HttpStatusCodeException {
 
         return makeAndSendRequest(HttpMethod.POST, path, null, body, responseType);
     }
 
-    private <TRequest, TResponse> ResponseEntity<TResponse> makeAndSendRequest(
+    private <RequestT, ResponseT> ResponseEntity<ResponseT> makeAndSendRequest(
         final HttpMethod method,
         final String path,
         @Nullable final Map<String, Object> parameters,
-        @Nullable final TRequest body,
-        final Class<TResponse> responseType) throws HttpStatusCodeException {
+        @Nullable final RequestT body,
+        final Class<ResponseT> responseType) throws HttpStatusCodeException {
 
-        final HttpEntity<TRequest> requestEntity = new HttpEntity<>(body, defaultHeaders());
+        final HttpEntity<RequestT> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
         return parameters != null
             ? restTemplate.exchange(path, method, requestEntity, responseType, parameters)
