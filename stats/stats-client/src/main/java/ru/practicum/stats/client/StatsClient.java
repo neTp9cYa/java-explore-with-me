@@ -20,7 +20,7 @@ import ru.practicum.stats.dto.StatItemViewDto;
 @Service
 public class StatsClient extends BaseClient {
 
-    final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public StatsClient(@Value("${stats-server.url}") final String serverUrl, final RestTemplateBuilder builder) {
         super(builder
