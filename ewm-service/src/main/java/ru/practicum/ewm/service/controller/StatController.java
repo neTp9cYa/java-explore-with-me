@@ -33,7 +33,7 @@ public class StatController {
 
     @GetMapping("/stats")
     @LogInputOutputAnnotaion
-    public StatItemViewDto[] getStats(
+    public List<StatItemViewDto> getStats(
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime start,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime end,
         @RequestParam final Optional<List<String>> uris,

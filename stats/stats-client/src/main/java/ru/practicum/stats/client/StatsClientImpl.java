@@ -1,7 +1,10 @@
 package ru.practicum.stats.client;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +37,7 @@ public class StatsClientImpl extends BaseClient implements StatsClient {
         post("/hit", hitCreateDto, Object.class);
     }
 
-    public StatItemViewDto[] getStats(final StatsRequestDto statsRequestDto) throws HttpStatusCodeException {
+    public List<StatItemViewDto> getStats(final StatsRequestDto statsRequestDto) throws HttpStatusCodeException {
         if (statsRequestDto.getStart() == null) {
             throw new IllegalArgumentException("Start must be set");
         }
@@ -62,7 +65,7 @@ public class StatsClientImpl extends BaseClient implements StatsClient {
         final ResponseEntity<StatItemViewDto[]> response = get(path, parameters, StatItemViewDto[].class);
 
         return response.getStatusCode().is2xxSuccessful()
-            ? response.getBody()
-            : new StatItemViewDto[0];
+            ? Arrays.asList(response.getBody())
+            : Collections.<StatItemViewDto>emptyList();
     }
 }
