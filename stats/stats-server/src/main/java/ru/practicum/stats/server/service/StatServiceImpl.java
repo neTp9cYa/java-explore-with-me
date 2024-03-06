@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.dto.StatItemViewDto;
 import ru.practicum.stats.server.model.Hit;
@@ -18,6 +19,7 @@ public class StatServiceImpl implements StatService {
     private final HitRepository hitRepository;
 
     @Override
+    @Transactional
     public Hit addHit(HitCreateDto hitCreateDto) {
         final Hit hit = hitMapper.toHit(hitCreateDto);
         hitRepository.save(hit);
@@ -25,6 +27,7 @@ public class StatServiceImpl implements StatService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<StatItemViewDto> getStats(final LocalDateTime start,
                                           final LocalDateTime end,
                                           final Optional<List<String>> urisOptional,
