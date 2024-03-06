@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.stats.client.StatsClient;
+import ru.practicum.stats.client.dto.StatsRequestDto;
 import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.dto.StatItemViewDto;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
@@ -36,10 +37,12 @@ public class StatController {
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime start,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime end,
         @RequestParam final Optional<List<String>> uris,
-        @RequestParam(defaultValue = "false") final Boolean unique) {
+        @RequestParam final Optional<Boolean> unique) {
 
-        return uris.isPresent()
-            ? statsClient.getStats(start, end, uris.get(), unique)
-            : statsClient.getStats(start, end, unique);
+        final StatsRequestDto statsRequestDto = new StatsRequestDto(start, end);
+        uris.ifPresent(statsRequestDto::setUris);
+        unique.ifPresent(statsRequestDto::setUnique);
+
+        return statsClient.getStats(statsRequestDto);
     }
 }

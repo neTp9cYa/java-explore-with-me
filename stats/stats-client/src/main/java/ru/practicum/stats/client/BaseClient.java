@@ -3,6 +3,7 @@ package ru.practicum.stats.client;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+
+@Slf4j
 @RequiredArgsConstructor
 public class BaseClient {
     protected final RestTemplate restTemplate;
@@ -26,7 +29,7 @@ public class BaseClient {
 
     protected <RequestT, ResponseT> ResponseEntity<ResponseT> post(
         final String path,
-        final ResponseT body,
+        final RequestT body,
         final Class<ResponseT> responseType) throws HttpStatusCodeException {
 
         return makeAndSendRequest(HttpMethod.POST, path, null, body, responseType);
@@ -41,9 +44,38 @@ public class BaseClient {
 
         final HttpEntity<RequestT> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
-        return parameters != null
-            ? restTemplate.exchange(path, method, requestEntity, responseType, parameters)
-            : restTemplate.exchange(path, method, requestEntity, responseType);
+        ResponseEntity<ResponseT> responseEntity = null;
+        try {
+            responseEntity = parameters != null
+                ? restTemplate.exchange(path, method, requestEntity, responseType, parameters)
+                : restTemplate.exchange(path, method, requestEntity, responseType);
+        } catch (final HttpStatusCodeException exception) {
+            log.error(
+                String.format(
+                    "Error occured on http request to stats-server " +
+                        "with method %s, path %s, parameters %s, requestBody %s, responseType %s",
+                    method,
+                    path,
+                    parameters,
+                    requestEntity.getBody(),
+                    responseType),
+                exception);
+            return ResponseEntity.status(exception.getStatusCode()).build();
+        }
+
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            log.error("Bad response status code on http request to stats-server " +
+                    "with method {}, path {}, parameters {}, requestBody {}, responseType {}, responseBody {}",
+                method,
+                path,
+                parameters,
+                requestEntity.getBody(),
+                responseType,
+                responseEntity.getBody());
+            return ResponseEntity.status(responseEntity.getStatusCode()).build();
+        }
+
+        return responseEntity;
     }
 
     private HttpHeaders defaultHeaders() {
