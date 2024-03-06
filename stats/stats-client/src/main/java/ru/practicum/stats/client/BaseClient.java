@@ -75,6 +75,14 @@ public class BaseClient {
             return ResponseEntity.status(responseEntity.getStatusCode()).build();
         }
 
+        log.info("Request to stats-server was completed successfully " +
+                "with method {}, path {}, parameters {}, requestBody {}, responseType {}, responseBody {}",
+            method,
+            path,
+            parameters,
+            requestEntity.getBody(),
+            responseType,
+            responseEntity.getBody());
         return responseEntity;
     }
 
