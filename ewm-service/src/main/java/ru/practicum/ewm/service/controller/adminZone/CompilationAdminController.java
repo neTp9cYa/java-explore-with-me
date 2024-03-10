@@ -1,15 +1,21 @@
-package ru.practicum.ewm.service.controller;
+package ru.practicum.ewm.service.controller.adminZone;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.CompilationCreateRequestDto;
 import ru.practicum.ewm.service.dto.CompilationUpdateRequestDto;
 import ru.practicum.ewm.service.dto.CompilationViewDto;
 
-public class AdminCompilation {
+@RestController
+@RequestMapping("/admin/compilations")
+@RequiredArgsConstructor
+public class CompilationAdminController {
 
     @PostMapping
     public CompilationViewDto create(@RequestBody final CompilationCreateRequestDto compilationCreateRequestDto) {

@@ -1,5 +1,6 @@
-package ru.practicum.ewm.service.controller;
+package ru.practicum.ewm.service.controller.adminZone;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +14,8 @@ import ru.practicum.ewm.service.dto.CategoryViewDto;
 
 @RestController
 @RequestMapping("/admin/categories")
-public class AdminCategoryController {
+@RequiredArgsConstructor
+public class CategoryAdminController {
 
     @PostMapping()
     public CategoryViewDto create(@RequestBody final CategoryCreateRequestDto categoryCreateRequestDto) {
