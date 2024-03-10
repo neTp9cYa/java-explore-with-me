@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
      email VARCHAR(254) NOT NULL,
 
      CONSTRAINT users_pk PRIMARY KEY (id),
-     CONSTRAINT users_uq_email PRIMARY KEY (email)
+     CONSTRAINT users_uq_email UNIQUE (email)
 );
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS categories (
      name VARCHAR(50) NOT NULL,
 
      CONSTRAINT categories_pk PRIMARY KEY (id),
+     CONSTRAINT categories_uq_name UNIQUE (name)
 );
 
 CREATE TABLE IF NOT EXISTS events (
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS events (
     required_moderation BOOLEAN NOT NULL,
 
     CONSTRAINT events_pk PRIMARY KEY (id),
-    CONSTRAINT events_fk_categories FOREIGN KEY (category_id) REFERENCES categories (id)
+    CONSTRAINT events_fk_categories FOREIGN KEY (category_id) REFERENCES categories (id),
     CONSTRAINT events_fk_users FOREIGN KEY (user_id) REFERENCES users (id)
 );
 

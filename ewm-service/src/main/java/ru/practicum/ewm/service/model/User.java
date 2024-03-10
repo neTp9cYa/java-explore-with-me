@@ -8,15 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "users")
 @Builder
 @Getter
-@Setter
-public class Category {
-
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -24,4 +21,7 @@ public class Category {
 
     @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "email", nullable = false)
+    private String email;
 }

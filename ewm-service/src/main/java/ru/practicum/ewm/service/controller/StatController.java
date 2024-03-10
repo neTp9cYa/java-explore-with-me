@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.stats.client.StatsClient;
-import ru.practicum.stats.client.dto.StatsRequestDto;
+import ru.practicum.stats.client.request.GetStatsRequest;
 import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.dto.StatItemViewDto;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
@@ -39,10 +39,10 @@ public class StatController {
         @RequestParam final Optional<List<String>> uris,
         @RequestParam final Optional<Boolean> unique) {
 
-        final StatsRequestDto statsRequestDto = new StatsRequestDto(start, end);
-        uris.ifPresent(statsRequestDto::setUris);
-        unique.ifPresent(statsRequestDto::setUnique);
+        final GetStatsRequest getStatsRequest = new GetStatsRequest(start, end);
+        uris.ifPresent(getStatsRequest::setUris);
+        unique.ifPresent(getStatsRequest::setUnique);
 
-        return statsClient.getStats(statsRequestDto);
+        return statsClient.getStats(getStatsRequest);
     }
 }

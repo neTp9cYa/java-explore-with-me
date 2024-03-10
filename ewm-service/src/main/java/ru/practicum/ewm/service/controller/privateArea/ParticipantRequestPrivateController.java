@@ -1,0 +1,40 @@
+package ru.practicum.ewm.service.controller.privateArea;
+
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewm.service.dto.participant.ParticipationRequestViewDto;
+import ru.practicum.ewm.service.service.api.ParticipationRequestService;
+
+@RestController
+@RequestMapping("/users/{userId}/requests")
+@RequiredArgsConstructor
+public class ParticipantRequestPrivateController {
+
+    private final ParticipationRequestService participationRequestService;
+
+    @PostMapping
+    public ParticipationRequestViewDto create(@PathVariable final long userId,
+                                              @RequestParam final long eventId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @PatchMapping("/{requestId}/cancel")
+    public ParticipationRequestViewDto cancel(@PathVariable final long userId,
+                                              @PathVariable final long requestId) {
+        throw new UnsupportedOperationException();
+    }
+
+
+    @GetMapping
+    public List<ParticipationRequestViewDto> getRequests(@PathVariable final long userId,
+                                                         @PathVariable final long requestId) {
+        throw new UnsupportedOperationException();
+    }
+}

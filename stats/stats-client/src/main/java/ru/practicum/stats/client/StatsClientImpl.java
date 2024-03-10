@@ -15,7 +15,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.stats.client.dto.StatsRequestDto;
+import ru.practicum.stats.client.request.GetStatsRequest;
 import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.dto.StatItemViewDto;
 
@@ -37,25 +37,25 @@ public class StatsClientImpl extends BaseClient implements StatsClient {
         post("/hit", hitCreateDto, Object.class);
     }
 
-    public List<StatItemViewDto> getStats(final StatsRequestDto statsRequestDto) throws HttpStatusCodeException {
-        if (statsRequestDto.getStart() == null) {
+    public List<StatItemViewDto> getStats(final GetStatsRequest getStatsRequest) throws HttpStatusCodeException {
+        if (getStatsRequest.getStart() == null) {
             throw new IllegalArgumentException("Start must be set");
         }
-        if (statsRequestDto.getEnd() == null) {
+        if (getStatsRequest.getEnd() == null) {
             throw new IllegalArgumentException("End must be set");
         }
 
         final Map<String, Object> parameters = new HashMap<>(Map.of(
-            "start", statsRequestDto.getStart().format(DATE_TIME_FORMATTER),
-            "end", statsRequestDto.getEnd().format(DATE_TIME_FORMATTER)
+            "start", getStatsRequest.getStart().format(DATE_TIME_FORMATTER),
+            "end", getStatsRequest.getEnd().format(DATE_TIME_FORMATTER)
         ));
 
-        if (statsRequestDto.getUris() != null) {
-            parameters.put("uris", String.join(",", statsRequestDto.getUris()));
+        if (getStatsRequest.getUris() != null) {
+            parameters.put("uris", String.join(",", getStatsRequest.getUris()));
         }
 
-        if (statsRequestDto.getUnique() != null) {
-            parameters.put("unique", statsRequestDto.getUnique());
+        if (getStatsRequest.getUnique() != null) {
+            parameters.put("unique", getStatsRequest.getUnique());
         }
 
         final String path = parameters.keySet().stream()

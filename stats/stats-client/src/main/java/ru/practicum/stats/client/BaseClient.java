@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RequiredArgsConstructor
-public class BaseClient {
+public abstract class BaseClient {
     protected final RestTemplate restTemplate;
 
     protected <ResponseT> ResponseEntity<ResponseT> get(
