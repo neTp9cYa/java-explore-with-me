@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.service.dto.compilation.CompilationViewDto;
+import ru.practicum.ewm.service.dto.compilation.CompilationDto;
 import ru.practicum.ewm.service.service.api.CompilationService;
+import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
+import ru.practicum.ewm.service.service.request.GetCompilationsRequest;
 
 @RestController
 @RequestMapping("/compilations")
@@ -20,14 +22,20 @@ public class CompilationPublicController {
     private final CompilationService compilationService;
 
     @GetMapping("/{compilationId}")
-    public CompilationViewDto get(@PathVariable final long compilationId) {
-        throw new UnsupportedOperationException();
+    public CompilationDto get(@PathVariable(name = "compId") final long compilationId) {
+        return compilationService.getCompilation(compilationId);
     }
 
     @GetMapping
-    public List<CompilationViewDto> search(@RequestParam final Boolean pinned,
-                                           @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                           @RequestParam(defaultValue = "10") @Positive final long size) {
-        throw new UnsupportedOperationException();
+    public List<CompilationDto> search(@RequestParam final Boolean pinned,
+                                       @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
+                                       @RequestParam(defaultValue = "10") @Positive final int size) {
+        final GetCompilationsRequest getCompilationsRequest = GetCompilationsRequest.builder()
+            .pinned(pinned)
+            .from(from)
+            .size(size)
+            .build();
+
+        return compilationService.getCompilations(getCompilationsRequest);
     }
 }

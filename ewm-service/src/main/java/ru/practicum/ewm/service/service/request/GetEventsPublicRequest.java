@@ -19,5 +19,5 @@ public class GetEventsPublicRequest {
     private boolean onlyAvailable;
     private EventSort sort;
     private long from;
-    private long size;
+    private int size;
 }

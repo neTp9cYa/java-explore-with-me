@@ -65,12 +65,6 @@ public class Event {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "latitude", nullable = true)
-    private float latitude;
-
-    @Column(name = "longitude", nullable = true)
-    private float longitude;
-
-    @Column(name = "required_moderation", nullable = false)
-    private boolean requiredModeration;
+    @Column(name = "request_moderation", nullable = false)
+    private boolean requestModeration;
 }

@@ -29,7 +29,7 @@ public class EventPublicController {
 
     @GetMapping("/{eventId}")
     public EventFullDto getEvent(@PathVariable final long categoryId) {
-        throw new UnsupportedOperationException();
+        return eventService.getEvent(categoryId);
     }
 
     @GetMapping
@@ -41,7 +41,7 @@ public class EventPublicController {
                                          @RequestParam(defaultValue = "false") final boolean onlyAvailable,
                                          @RequestParam(defaultValue = "EVENT_DATE") final EventSort sort,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                         @RequestParam(defaultValue = "10") @Positive final long size,
+                                         @RequestParam(defaultValue = "10") @Positive final int size,
                                          final HttpServletRequest request) {
 
         final GetEventsPublicRequest getEventsPublicRequest = GetEventsPublicRequest.builder()

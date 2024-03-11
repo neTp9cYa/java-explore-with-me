@@ -14,9 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.event.EventCreateRequestDto;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
+import ru.practicum.ewm.service.dto.event.EventParticipationRequestUpdateRequestDto;
+import ru.practicum.ewm.service.dto.event.EventParticipationRequestUpdateResponseDto;
 import ru.practicum.ewm.service.dto.event.EventShortDto;
-import ru.practicum.ewm.service.dto.participant.ParticipationRequestViewDto;
+import ru.practicum.ewm.service.dto.event.EventUpdateRequestDto;
+import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
 import ru.practicum.ewm.service.service.api.EventService;
+import ru.practicum.ewm.service.service.request.GetEventsPrivateRequest;
 
 @RestController
 @RequestMapping("/users/{userId}/events")
@@ -28,38 +32,46 @@ public class EventPrivateController {
     @PostMapping
     public EventFullDto create(@PathVariable final long userId,
                                @RequestBody final EventCreateRequestDto eventCreateRequestDto) {
-        throw new UnsupportedOperationException();
+        return eventService.create(userId, eventCreateRequestDto);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto update(@PathVariable final long userId,
                                @PathVariable final long eventId,
-                               @RequestBody final EventCreateRequestDto eventCreateRequestDto) {
-        throw new UnsupportedOperationException();
+                               @RequestBody final EventUpdateRequestDto eventUpdateRequestDto) {
+        return eventService.update(userId, eventId, eventUpdateRequestDto);
     }
 
     @GetMapping("/{eventId}")
-    public List<EventShortDto> get(@PathVariable final long userId,
-                                   @PathVariable final long eventId) {
-        throw new UnsupportedOperationException();
+    public EventFullDto getEvent(@PathVariable final long userId,
+                                 @PathVariable final long eventId) {
+        return eventService.getEvent(userId, eventId);
     }
 
     @GetMapping
-    public List<EventShortDto> getList(@PathVariable final long userId,
-                                       @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                       @RequestParam(defaultValue = "10") @Positive final long size) {
-        throw new UnsupportedOperationException();
+    public List<EventShortDto> getEvents(@PathVariable final long userId,
+                                         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
+                                         @RequestParam(defaultValue = "10") @Positive final int size) {
+        final GetEventsPrivateRequest getEventsPrivateRequest = GetEventsPrivateRequest.builder()
+            .from(from)
+            .size(size)
+            .build();
+
+        return eventService.getEvents(userId, getEventsPrivateRequest);
     }
 
     @PatchMapping("/{eventId}/requests")
-    public List<ParticipationRequestViewDto> updateRequests(@PathVariable final long userId,
-                                                            @RequestParam final List<Long> eventId) {
-        throw new UnsupportedOperationException();
+    public EventParticipationRequestUpdateResponseDto updateRequests(
+        @PathVariable final long userId,
+        @PathVariable final long eventId,
+        @RequestBody final EventParticipationRequestUpdateRequestDto eventParticipationRequestUpdateRequestDto) {
+
+        return eventService.updateRequests(userId, eventId, eventParticipationRequestUpdateRequestDto);
     }
 
     @GetMapping("/{eventId}/requests")
-    public List<ParticipationRequestViewDto> getRequests(@PathVariable final long userId,
-                                                         @PathVariable final long eventId) {
-        throw new UnsupportedOperationException();
+    public List<ParticipationRequestDto> getRequests(@PathVariable final long userId,
+                                                     @PathVariable final long eventId) {
+        return eventService.getRequests(userId, eventId);
     }
 }

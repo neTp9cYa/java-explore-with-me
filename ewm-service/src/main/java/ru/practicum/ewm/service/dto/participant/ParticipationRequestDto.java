@@ -1,8 +1,10 @@
 package ru.practicum.ewm.service.dto.participant;
 
 import java.time.LocalDateTime;
+import lombok.Builder;
 
-public class ParticipationRequestViewDto {
+@Builder
+public class ParticipationRequestDto {
     private LocalDateTime created;
     private long event;
     private long id;

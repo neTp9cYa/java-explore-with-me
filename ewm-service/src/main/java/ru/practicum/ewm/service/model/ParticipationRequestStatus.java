@@ -1,7 +1,9 @@
 package ru.practicum.ewm.service.model;
 
 public enum ParticipationRequestStatus {
-    PENDING;
+    PENDING,
+    CONFIRMED,
+    REJECTED;
 
     public static ParticipationRequestStatus from(final String statusName) {
         for (final ParticipationRequestStatus status : values()) {

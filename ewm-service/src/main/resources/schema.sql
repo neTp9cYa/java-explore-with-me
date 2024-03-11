@@ -35,9 +35,7 @@ CREATE TABLE IF NOT EXISTS events (
     created_on TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     published_on TIMESTAMP WITHOUT TIME ZONE,
     user_id BIGINT NOT NULL,
-    latitude FLOAT NOT NULL,
-    longitude FLOAT NOT NULL,
-    required_moderation BOOLEAN NOT NULL,
+    request_moderation BOOLEAN NOT NULL,
 
     CONSTRAINT events_pk PRIMARY KEY (id),
     CONSTRAINT events_fk_categories FOREIGN KEY (category_id) REFERENCES categories (id),

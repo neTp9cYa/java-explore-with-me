@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.ewm.service.dto.location.LocationUpdateDto;
 
 @Getter
 public class EventUpdateAdminRequestDto {
@@ -19,8 +18,6 @@ public class EventUpdateAdminRequestDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-
-    private LocationUpdateDto location;
 
     private Boolean paid;
 

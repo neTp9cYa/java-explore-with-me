@@ -13,10 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "participation_requests")
 @Builder
+@Getter
+@Setter
 public class ParticipationRequest {
 
     @Id
@@ -26,7 +30,7 @@ public class ParticipationRequest {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private User requester;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "event_id", nullable = false)

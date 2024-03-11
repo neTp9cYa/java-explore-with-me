@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
 import ru.practicum.ewm.service.service.api.CategoryService;
+import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
 
 @RestController
 @RequestMapping("/categories")
@@ -21,12 +22,17 @@ public class CategoryPublicController {
 
     @GetMapping("/{categoryId}")
     public CategoryDto getCategory(@PathVariable final long categoryId) {
-        throw new UnsupportedOperationException();
+        return categoryService.getCategory(categoryId);
     }
 
     @GetMapping
     public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                           @RequestParam(defaultValue = "10") @Positive final long size) {
-        throw new UnsupportedOperationException();
+                                           @RequestParam(defaultValue = "10") @Positive final int size) {
+        final GetCategoriesRequest getCategoriesRequest = GetCategoriesRequest.builder()
+            .from(from)
+            .size(size)
+            .build();
+
+        return categoryService.getCategories(getCategoriesRequest);
     }
 }

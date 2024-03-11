@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.service.dto.participant.ParticipationRequestViewDto;
+import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
 import ru.practicum.ewm.service.service.api.ParticipationRequestService;
 
 @RestController
@@ -20,21 +20,20 @@ public class ParticipantRequestPrivateController {
     private final ParticipationRequestService participationRequestService;
 
     @PostMapping
-    public ParticipationRequestViewDto create(@PathVariable final long userId,
-                                              @RequestParam final long eventId) {
-        throw new UnsupportedOperationException();
+    public ParticipationRequestDto create(@PathVariable final long userId,
+                                          @RequestParam final long eventId) {
+        return participationRequestService.create(userId, eventId);
     }
 
     @PatchMapping("/{requestId}/cancel")
-    public ParticipationRequestViewDto cancel(@PathVariable final long userId,
-                                              @PathVariable final long requestId) {
-        throw new UnsupportedOperationException();
+    public ParticipationRequestDto cancel(@PathVariable final long userId,
+                                          @PathVariable final long requestId) {
+        return participationRequestService.cancel(userId, requestId);
     }
 
 
     @GetMapping
-    public List<ParticipationRequestViewDto> getRequests(@PathVariable final long userId,
-                                                         @PathVariable final long requestId) {
-        throw new UnsupportedOperationException();
+    public List<ParticipationRequestDto> getRequests(@PathVariable final long userId) {
+        return participationRequestService.getRequests(userId);
     }
 }
