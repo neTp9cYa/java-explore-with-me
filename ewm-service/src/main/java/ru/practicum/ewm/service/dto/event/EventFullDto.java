@@ -3,7 +3,6 @@ package ru.practicum.ewm.service.dto.event;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
-import ru.practicum.ewm.service.dto.location.LocationViewDto;
 
 @Builder
 public class EventFullDto {
@@ -18,7 +17,6 @@ public class EventFullDto {
     private EventViewInitiatorDto initiator;
     private LocalDateTime createdOn;
     private String description;
-    private LocationViewDto location;
     private int participantLimit;
     private LocalDateTime publishedOn;
     private boolean requestModeration;
