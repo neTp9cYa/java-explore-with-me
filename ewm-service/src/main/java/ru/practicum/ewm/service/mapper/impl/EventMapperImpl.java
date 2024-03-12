@@ -71,12 +71,12 @@ public class EventMapperImpl implements EventMapper {
             .category(category)
             .participantLimit(eventDto.getParticipantLimit())
             .state(EventState.PENDING)
-            .paid(eventDto.isPaid())
+            .paid(eventDto.getPaid())
             .eventDate(eventDto.getEventDate())
             .createdOn(LocalDateTime.now())
             .publishedOn(null)
             .user(user)
-            .requestModeration(eventDto.isRequestModeration())
+            .requestModeration(eventDto.getRequestModeration())
             .build();
     }
 }

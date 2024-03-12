@@ -9,6 +9,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LocationDto {
-    private float lat;
-    private float lon;
+    private Float lat;
+    private Float lon;
 }

@@ -5,17 +5,18 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Range;
 import ru.practicum.ewm.service.dto.Location.LocationCreateRequestDto;
 
 @Getter
 public class EventCreateRequestDto {
     @NotBlank
-    @Range(min = 20, max = 2000)
+    @Size(min = 20, max = 2000)
     private String annotation;
 
     @NotNull
@@ -23,7 +24,7 @@ public class EventCreateRequestDto {
     private Long category;
 
     @NotBlank
-    @Range(min = 20, max = 7000)
+    @Size(min = 20, max = 7000)
     private String description;
 
     @NotNull
@@ -33,11 +34,15 @@ public class EventCreateRequestDto {
     @NotNull
     private LocationCreateRequestDto location;
 
-    private boolean paid = false;
-    private int participantLimit = 0;
-    private boolean requestModeration = false;
+    private Boolean paid = false;
+
+    @PositiveOrZero
+    private Integer participantLimit = 0;
+
+
+    private Boolean requestModeration = false;
 
     @NotBlank
-    @Range(min = 3, max = 120)
+    @Size(min = 3, max = 120)
     private String title;
 }

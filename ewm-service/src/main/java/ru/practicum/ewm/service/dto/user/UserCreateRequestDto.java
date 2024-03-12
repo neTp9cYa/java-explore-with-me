@@ -4,18 +4,18 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Range;
 
 @Getter
 public class UserCreateRequestDto {
 
     @NotBlank
-    @Range(min = 2, max = 250)
+    @Size(min = 2, max = 250)
     private String name;
 
     @NotBlank
-    @Range(min = 6, max = 254)
+    @Size(min = 6, max = 254)
     @Email
     private String email;
 }
