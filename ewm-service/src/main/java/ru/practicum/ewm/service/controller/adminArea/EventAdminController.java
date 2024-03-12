@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.service.dto.event.EventState;
 import ru.practicum.ewm.service.dto.event.EventUpdateAdminRequestDto;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.dto.event.EventShortDto;
+import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.request.GetEventsAdminRequest;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/admin/events")
@@ -27,12 +28,14 @@ public class EventAdminController {
     private final EventService eventService;
 
     @PatchMapping("/{eventId}")
+    @LogInputOutputAnnotaion
     public EventFullDto update(@PathVariable final int eventId,
                                @RequestBody final EventUpdateAdminRequestDto eventDto) {
         return eventService.updateByAdmin(eventId, eventDto);
     }
 
     @GetMapping
+    @LogInputOutputAnnotaion
     public List<EventFullDto> getEvents(@RequestParam final List<Long> users,
                                         @RequestParam final List<EventState> states,
                                         @RequestParam final List<Long> categories,

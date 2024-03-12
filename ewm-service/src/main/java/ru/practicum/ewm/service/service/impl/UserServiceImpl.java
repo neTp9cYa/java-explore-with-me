@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.service.dto.user.UserCreateRequestDto;
-import ru.practicum.ewm.service.dto.user.UserDto;
+import ru.practicum.ewm.service.dto.user.UserFullDto;
 import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.service.mapper.api.UserMapper;
 import ru.practicum.ewm.service.model.User;
@@ -24,10 +24,10 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public UserDto create(final UserCreateRequestDto userDto) {
+    public UserFullDto create(final UserCreateRequestDto userDto) {
         final User creatingUser = userMapper.toUser(userDto);
         final User createdUser = userRepository.save(creatingUser);
-        return userMapper.toUserDto(createdUser);
+        return userMapper.toUserFullDto(createdUser);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(final GetUsersRequest getUsersRequest) {
+    public List<UserFullDto> getUsers(final GetUsersRequest getUsersRequest) {
         if (getUsersRequest.getIds() == null || getUsersRequest.getIds().isEmpty()) {
             final Pageable pageable = FlexPageRequest.of(getUsersRequest.getFrom(), getUsersRequest.getSize());
             final Page<User> usersPage = userRepository.findAll(pageable);

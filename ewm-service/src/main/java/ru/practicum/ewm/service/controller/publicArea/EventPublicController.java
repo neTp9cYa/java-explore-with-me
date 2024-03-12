@@ -11,13 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.service.dto.event.EventSort;
-import ru.practicum.ewm.service.dto.event.EventState;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.dto.event.EventShortDto;
+import ru.practicum.ewm.service.dto.event.EventSort;
+import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.api.StatService;
 import ru.practicum.ewm.service.service.request.GetEventsPublicRequest;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/events")
@@ -28,11 +29,13 @@ public class EventPublicController {
     private final StatService statService;
 
     @GetMapping("/{eventId}")
+    @LogInputOutputAnnotaion
     public EventFullDto getEvent(@PathVariable final long categoryId) {
         return eventService.getEvent(categoryId);
     }
 
     @GetMapping
+    @LogInputOutputAnnotaion
     public List<EventShortDto> getEvents(@RequestParam(required = false) final String text,
                                          @RequestParam(required = false) final List<Long> categories,
                                          @RequestParam(required = false) final Boolean paid,

@@ -23,6 +23,7 @@ import ru.practicum.ewm.service.model.Event;
 import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.model.ParticipationRequest;
 import ru.practicum.ewm.service.model.ParticipationRequestStatus;
+import ru.practicum.ewm.service.model.User;
 import ru.practicum.ewm.service.repository.CategoryRepository;
 import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.ParticipationRequestRepository;
@@ -176,8 +177,17 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto create(long userId, final EventCreateRequestDto eventCreateRequestDto) {
-        final Event creatingEvent = eventMapper.toEvent(eventCreateRequestDto);
+
+        final User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+
+        final Category category = categoryRepository.findById(eventCreateRequestDto.getCategory())
+            .orElseThrow(() -> new NotFoundException(
+                String.format("Category with id %d not found", eventCreateRequestDto.getCategory())));
+
+        final Event creatingEvent = eventMapper.toEvent(eventCreateRequestDto, user, category);
         final Event createdEvent = eventRepository.save(creatingEvent);
+
         return eventMapper.toEventFullDto(createdEvent);
     }
 

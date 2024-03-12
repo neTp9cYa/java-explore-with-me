@@ -7,7 +7,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @ToString
-public class StatItemViewDto {
+public class StatItemDto {
     private String app;
     private String uri;
     private long hits;

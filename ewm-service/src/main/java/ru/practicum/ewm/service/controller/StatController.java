@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.stats.client.StatsClient;
 import ru.practicum.stats.client.request.GetStatsRequest;
 import ru.practicum.stats.dto.HitCreateDto;
-import ru.practicum.stats.dto.StatItemViewDto;
+import ru.practicum.stats.dto.StatItemDto;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
@@ -33,7 +33,7 @@ public class StatController {
 
     @GetMapping("/stats")
     @LogInputOutputAnnotaion
-    public List<StatItemViewDto> getStats(
+    public List<StatItemDto> getStats(
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime start,
         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime end,
         @RequestParam final Optional<List<String>> uris,

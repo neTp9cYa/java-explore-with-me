@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.service.dto.user.UserCreateRequestDto;
-import ru.practicum.ewm.service.dto.user.UserDto;
+import ru.practicum.ewm.service.dto.user.UserFullDto;
+import ru.practicum.ewm.service.dto.user.UserShortDto;
 import ru.practicum.ewm.service.mapper.api.UserMapper;
 import ru.practicum.ewm.service.model.User;
 
@@ -19,8 +20,8 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public UserDto toUserDto(final User user) {
-        return UserDto.builder()
+    public UserFullDto toUserFullDto(final User user) {
+        return UserFullDto.builder()
             .id(user.getId())
             .name(user.getName())
             .email(user.getEmail())
@@ -28,7 +29,15 @@ public class UserMapperImpl implements UserMapper {
     }
 
     @Override
-    public List<UserDto> toUserDtos(final List<User> users) {
-        return users.stream().map(this::toUserDto).collect(Collectors.toList());
+    public UserShortDto toUserShortDto(User user) {
+        return UserShortDto.builder()
+            .id(user.getId())
+            .name(user.getName())
+            .build();
+    }
+
+    @Override
+    public List<UserFullDto> toUserDtos(final List<User> users) {
+        return users.stream().map(this::toUserFullDto).collect(Collectors.toList());
     }
 }

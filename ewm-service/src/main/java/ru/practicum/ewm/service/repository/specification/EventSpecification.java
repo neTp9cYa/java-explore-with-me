@@ -5,8 +5,8 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
-import ru.practicum.ewm.service.dto.event.EventState;
 import ru.practicum.ewm.service.model.Event;
+import ru.practicum.ewm.service.model.EventState;
 
 public class EventSpecification {
 

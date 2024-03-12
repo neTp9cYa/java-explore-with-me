@@ -17,7 +17,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.stats.client.request.GetStatsRequest;
 import ru.practicum.stats.dto.HitCreateDto;
-import ru.practicum.stats.dto.StatItemViewDto;
+import ru.practicum.stats.dto.StatItemDto;
 
 @Slf4j
 @Service
@@ -37,7 +37,7 @@ public class StatsClientImpl extends BaseClient implements StatsClient {
         post("/hit", hitCreateDto, Object.class);
     }
 
-    public List<StatItemViewDto> getStats(final GetStatsRequest getStatsRequest) throws HttpStatusCodeException {
+    public List<StatItemDto> getStats(final GetStatsRequest getStatsRequest) throws HttpStatusCodeException {
         if (getStatsRequest.getStart() == null) {
             throw new IllegalArgumentException("Start must be set");
         }
@@ -62,10 +62,10 @@ public class StatsClientImpl extends BaseClient implements StatsClient {
             .map(key -> String.format("%s={%s}", key, key))
             .collect(Collectors.joining("&", "stats?", ""));
 
-        final ResponseEntity<StatItemViewDto[]> response = get(path, parameters, StatItemViewDto[].class);
+        final ResponseEntity<StatItemDto[]> response = get(path, parameters, StatItemDto[].class);
 
         return response.getStatusCode().is2xxSuccessful()
             ? Arrays.asList(response.getBody())
-            : Collections.<StatItemViewDto>emptyList();
+            : Collections.<StatItemDto>emptyList();
     }
 }

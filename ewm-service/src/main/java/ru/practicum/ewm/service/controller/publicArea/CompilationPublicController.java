@@ -13,6 +13,7 @@ import ru.practicum.ewm.service.dto.compilation.CompilationDto;
 import ru.practicum.ewm.service.service.api.CompilationService;
 import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
 import ru.practicum.ewm.service.service.request.GetCompilationsRequest;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/compilations")
@@ -22,11 +23,13 @@ public class CompilationPublicController {
     private final CompilationService compilationService;
 
     @GetMapping("/{compilationId}")
+    @LogInputOutputAnnotaion
     public CompilationDto get(@PathVariable(name = "compId") final long compilationId) {
         return compilationService.getCompilation(compilationId);
     }
 
     @GetMapping
+    @LogInputOutputAnnotaion
     public List<CompilationDto> search(@RequestParam final Boolean pinned,
                                        @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
                                        @RequestParam(defaultValue = "10") @Positive final int size) {

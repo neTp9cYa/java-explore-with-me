@@ -1,19 +1,26 @@
 package ru.practicum.ewm.service.mapper.impl;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.ewm.service.dto.Location.LocationDto;
 import ru.practicum.ewm.service.dto.event.EventCreateRequestDto;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.dto.event.EventShortDto;
 import ru.practicum.ewm.service.mapper.api.CategoryMapper;
 import ru.practicum.ewm.service.mapper.api.EventMapper;
+import ru.practicum.ewm.service.mapper.api.UserMapper;
+import ru.practicum.ewm.service.model.Category;
 import ru.practicum.ewm.service.model.Event;
+import ru.practicum.ewm.service.model.EventState;
+import ru.practicum.ewm.service.model.User;
 
 @Component
 @RequiredArgsConstructor
 public class EventMapperImpl implements EventMapper {
 
     private final CategoryMapper categoryMapper;
+    private final UserMapper userMapper;
 
     @Override
     public EventFullDto toEventFullDto(Event event) {
@@ -25,13 +32,13 @@ public class EventMapperImpl implements EventMapper {
             .description(event.getDescription())
             .eventDate(event.getEventDate())
             .id(event.getId())
-            //.initiator()
-            //.location()
+            .initiator(userMapper.toUserShortDto(event.getUser()))
+            .location(new LocationDto(event.getLatitude(), event.getLongitude()))
             .paid(event.isPaid())
             .participantLimit(event.getParticipantLimit())
             .publishedOn(event.getPublishedOn())
             .requestModeration(event.isRequestModeration())
-            //.state(event.getState())
+            .state(event.getState())
             .title(event.getTitle())
             //.views()
             .build();
@@ -46,7 +53,7 @@ public class EventMapperImpl implements EventMapper {
             //.confirmedRequests()
             .eventDate(event.getEventDate())
             .id(event.getId())
-            //.initiator()
+            .initiator(userMapper.toUserShortDto(event.getUser()))
             .paid(event.isPaid())
             .title(event.getTitle())
             //.views()
@@ -54,20 +61,22 @@ public class EventMapperImpl implements EventMapper {
     }
 
     @Override
-    public Event toEvent(EventCreateRequestDto eventDto) {
+    public Event toEvent(final EventCreateRequestDto eventDto,
+                         final User user,
+                         final Category category) {
         return Event.builder()
             .title(eventDto.getTitle())
             .annotation(eventDto.getAnnotation())
             .description(eventDto.getDescription())
-            //.category(eventDto.getCategory())
+            .category(category)
             .participantLimit(eventDto.getParticipantLimit())
-            //.state()
-            .paid(eventDto.getPaid())
+            .state(EventState.PENDING)
+            .paid(eventDto.isPaid())
             .eventDate(eventDto.getEventDate())
-            //.createdOn()
-            //.publishedOn()
-            //.user()
-            .requestModeration(eventDto.getRequestModeration())
+            .createdOn(LocalDateTime.now())
+            .publishedOn(null)
+            .user(user)
+            .requestModeration(eventDto.isRequestModeration())
             .build();
     }
 }

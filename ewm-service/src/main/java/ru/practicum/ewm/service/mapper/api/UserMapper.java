@@ -2,11 +2,13 @@ package ru.practicum.ewm.service.mapper.api;
 
 import java.util.List;
 import ru.practicum.ewm.service.dto.user.UserCreateRequestDto;
-import ru.practicum.ewm.service.dto.user.UserDto;
+import ru.practicum.ewm.service.dto.user.UserFullDto;
+import ru.practicum.ewm.service.dto.user.UserShortDto;
 import ru.practicum.ewm.service.model.User;
 
 public interface UserMapper {
     User toUser(final UserCreateRequestDto userCreateRequestDto);
-    UserDto toUserDto(final User user);
-    List<UserDto> toUserDtos(final List<User> users);
+    UserFullDto toUserFullDto(final User user);
+    UserShortDto toUserShortDto(final User user);
+    List<UserFullDto> toUserDtos(final List<User> users);
 }

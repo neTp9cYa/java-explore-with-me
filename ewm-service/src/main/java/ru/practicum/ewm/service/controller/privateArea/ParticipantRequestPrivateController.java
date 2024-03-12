@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
 import ru.practicum.ewm.service.service.api.ParticipationRequestService;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/users/{userId}/requests")
@@ -20,12 +21,14 @@ public class ParticipantRequestPrivateController {
     private final ParticipationRequestService participationRequestService;
 
     @PostMapping
+    @LogInputOutputAnnotaion
     public ParticipationRequestDto create(@PathVariable final long userId,
                                           @RequestParam final long eventId) {
         return participationRequestService.create(userId, eventId);
     }
 
     @PatchMapping("/{requestId}/cancel")
+    @LogInputOutputAnnotaion
     public ParticipationRequestDto cancel(@PathVariable final long userId,
                                           @PathVariable final long requestId) {
         return participationRequestService.cancel(userId, requestId);
@@ -33,6 +36,7 @@ public class ParticipantRequestPrivateController {
 
 
     @GetMapping
+    @LogInputOutputAnnotaion
     public List<ParticipationRequestDto> getRequests(@PathVariable final long userId) {
         return participationRequestService.getRequests(userId);
     }

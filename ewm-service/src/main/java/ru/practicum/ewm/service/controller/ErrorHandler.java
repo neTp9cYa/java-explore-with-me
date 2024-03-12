@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -105,6 +106,21 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
             .message(e.getLocalizedMessage())
             .status(HttpStatus.BAD_REQUEST)
             .errors(errors)
+            .build();
+
+        return new ResponseEntity<>(apiErrorDto, new HttpHeaders(), apiErrorDto.getStatus());
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(
+        final MissingServletRequestParameterException e,
+        HttpHeaders headers,
+        HttpStatus status,
+        WebRequest request) {
+        final ApiErrorDto apiErrorDto = ApiErrorDto.builder()
+            .reason("The required query parameter is absent")
+            .message(e.getLocalizedMessage())
+            .status(HttpStatus.BAD_REQUEST)
             .build();
 
         return new ResponseEntity<>(apiErrorDto, new HttpHeaders(), apiErrorDto.getStatus());

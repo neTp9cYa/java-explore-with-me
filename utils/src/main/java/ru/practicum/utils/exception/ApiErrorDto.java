@@ -15,5 +15,7 @@ public class ApiErrorDto {
     private String message;
     private String reason;
     private HttpStatus status;
+
+    @Builder.Default
     private LocalDateTime timestamp = LocalDateTime.now();
 }

@@ -11,9 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Builder;
 
-@Entity
-@Table(name = "compilation_events")
-@Builder
+//@Entity
+//@Table(name = "compilation_events")
+//@Builder
 public class CompilationEvent {
 
     @Id

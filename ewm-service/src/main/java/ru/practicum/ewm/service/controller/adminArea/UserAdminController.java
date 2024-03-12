@@ -1,7 +1,6 @@
 package ru.practicum.ewm.service.controller.adminArea;
 
 import java.util.List;
-import java.util.Optional;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.user.UserCreateRequestDto;
-import ru.practicum.ewm.service.dto.user.UserDto;
+import ru.practicum.ewm.service.dto.user.UserFullDto;
 import ru.practicum.ewm.service.service.api.UserService;
 import ru.practicum.ewm.service.service.request.GetUsersRequest;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -28,20 +28,23 @@ public class UserAdminController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto create(@RequestBody final UserCreateRequestDto userDto) {
+    @LogInputOutputAnnotaion
+    public UserFullDto create(@RequestBody final UserCreateRequestDto userDto) {
         return userService.create(userDto);
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @LogInputOutputAnnotaion
     public void delete(@PathVariable final long userId) {
         userService.delete(userId);
     }
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam(required = false) final List<Long> ids,
-                         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                         @RequestParam(defaultValue = "10") @Positive final int size) {
+    @LogInputOutputAnnotaion
+    public List<UserFullDto> getUsers(@RequestParam(required = false) final List<Long> ids,
+                                      @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
+                                      @RequestParam(defaultValue = "10") @Positive final int size) {
         final GetUsersRequest getUsersRequest = GetUsersRequest.builder()
             .ids(ids)
             .from(from)

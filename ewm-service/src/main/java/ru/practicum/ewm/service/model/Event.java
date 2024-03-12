@@ -12,8 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -21,6 +23,8 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Event {
 
     @Id
@@ -67,4 +71,10 @@ public class Event {
 
     @Column(name = "request_moderation", nullable = false)
     private boolean requestModeration;
+
+    @Column(name = "latitude", nullable = false)
+    private float latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private float longitude;
 }

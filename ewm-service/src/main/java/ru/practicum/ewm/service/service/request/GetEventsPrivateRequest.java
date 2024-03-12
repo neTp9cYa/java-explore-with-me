@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import ru.practicum.ewm.service.dto.event.EventSort;
-import ru.practicum.ewm.service.dto.event.EventState;
 
 @Getter
 @Builder

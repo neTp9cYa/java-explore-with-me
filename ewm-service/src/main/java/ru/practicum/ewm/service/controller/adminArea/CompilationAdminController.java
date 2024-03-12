@@ -14,6 +14,7 @@ import ru.practicum.ewm.service.dto.compilation.CompilationCreateRequestDto;
 import ru.practicum.ewm.service.dto.compilation.CompilationDto;
 import ru.practicum.ewm.service.dto.compilation.CompilationUpdateRequestDto;
 import ru.practicum.ewm.service.service.api.CompilationService;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/admin/compilations")
@@ -23,11 +24,13 @@ public class CompilationAdminController {
     private final CompilationService compilationService;
 
     @PostMapping
+    @LogInputOutputAnnotaion
     public CompilationDto create(@RequestBody final CompilationCreateRequestDto compilationDto) {
         return compilationService.create(compilationDto);
     }
 
     @PatchMapping("/{compilationId}")
+    @LogInputOutputAnnotaion
     public CompilationDto update(@PathVariable final long compilationId,
                                  @RequestBody final CompilationUpdateRequestDto compilationDto) {
         return compilationService.update(compilationId, compilationDto);
@@ -35,6 +38,7 @@ public class CompilationAdminController {
 
     @DeleteMapping("/{compilationId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @LogInputOutputAnnotaion
     public void delete(@PathVariable final long compilationId) {
         compilationService.delete(compilationId);;
     }

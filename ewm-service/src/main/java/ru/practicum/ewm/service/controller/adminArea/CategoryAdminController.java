@@ -14,6 +14,7 @@ import ru.practicum.ewm.service.dto.category.CategoryCreateRequestDto;
 import ru.practicum.ewm.service.dto.category.CategoryUpdateRequestDto;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
 import ru.practicum.ewm.service.service.api.CategoryService;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/admin/categories")
@@ -22,12 +23,14 @@ public class CategoryAdminController {
 
     private final CategoryService categoryService;
 
-    @PostMapping()
+    @PostMapping
+    @LogInputOutputAnnotaion
     public CategoryDto create(@RequestBody final CategoryCreateRequestDto categoryDto) {
         return categoryService.create(categoryDto);
     }
 
     @PatchMapping("/{categoryId}")
+    @LogInputOutputAnnotaion
     public CategoryDto update(@PathVariable final long categoryId,
                               @RequestBody final CategoryUpdateRequestDto categoryDto) {
         return categoryService.update(categoryId, categoryDto);
@@ -35,6 +38,7 @@ public class CategoryAdminController {
 
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @LogInputOutputAnnotaion
     public void delete(@PathVariable final long categoryId) {
         categoryService.delete(categoryId);
     }

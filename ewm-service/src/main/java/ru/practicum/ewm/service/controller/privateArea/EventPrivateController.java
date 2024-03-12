@@ -21,6 +21,7 @@ import ru.practicum.ewm.service.dto.event.EventUpdateRequestDto;
 import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
 import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.request.GetEventsPrivateRequest;
+import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
 @RequestMapping("/users/{userId}/events")
@@ -30,12 +31,14 @@ public class EventPrivateController {
     private final EventService eventService;
 
     @PostMapping
+    @LogInputOutputAnnotaion
     public EventFullDto create(@PathVariable final long userId,
                                @RequestBody final EventCreateRequestDto eventCreateRequestDto) {
         return eventService.create(userId, eventCreateRequestDto);
     }
 
     @PatchMapping("/{eventId}")
+    @LogInputOutputAnnotaion
     public EventFullDto update(@PathVariable final long userId,
                                @PathVariable final long eventId,
                                @RequestBody final EventUpdateRequestDto eventUpdateRequestDto) {
@@ -43,12 +46,14 @@ public class EventPrivateController {
     }
 
     @GetMapping("/{eventId}")
+    @LogInputOutputAnnotaion
     public EventFullDto getEvent(@PathVariable final long userId,
                                  @PathVariable final long eventId) {
         return eventService.getEvent(userId, eventId);
     }
 
     @GetMapping
+    @LogInputOutputAnnotaion
     public List<EventShortDto> getEvents(@PathVariable final long userId,
                                          @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
                                          @RequestParam(defaultValue = "10") @Positive final int size) {
@@ -61,6 +66,7 @@ public class EventPrivateController {
     }
 
     @PatchMapping("/{eventId}/requests")
+    @LogInputOutputAnnotaion
     public EventParticipationRequestUpdateResponseDto updateRequests(
         @PathVariable final long userId,
         @PathVariable final long eventId,
@@ -70,6 +76,7 @@ public class EventPrivateController {
     }
 
     @GetMapping("/{eventId}/requests")
+    @LogInputOutputAnnotaion
     public List<ParticipationRequestDto> getRequests(@PathVariable final long userId,
                                                      @PathVariable final long eventId) {
         return eventService.getRequests(userId, eventId);
