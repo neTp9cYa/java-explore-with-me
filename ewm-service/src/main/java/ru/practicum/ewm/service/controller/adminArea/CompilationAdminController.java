@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.controller.adminArea;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,14 +26,14 @@ public class CompilationAdminController {
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public CompilationDto create(@RequestBody final CompilationCreateRequestDto compilationDto) {
+    public CompilationDto create(@RequestBody @Valid final CompilationCreateRequestDto compilationDto) {
         return compilationService.create(compilationDto);
     }
 
     @PatchMapping("/{compilationId}")
     @LogInputOutputAnnotaion
     public CompilationDto update(@PathVariable final long compilationId,
-                                 @RequestBody final CompilationUpdateRequestDto compilationDto) {
+                                 @RequestBody @Valid final CompilationUpdateRequestDto compilationDto) {
         return compilationService.update(compilationId, compilationDto);
     }
 

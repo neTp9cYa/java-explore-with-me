@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service.controller.adminArea;
 
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class UserAdminController {
 
     @PostMapping
     @LogInputOutputAnnotaion
-    public UserFullDto create(@RequestBody final UserCreateRequestDto userDto) {
+    public UserFullDto create(@RequestBody @Valid final UserCreateRequestDto userDto) {
         return userService.create(userDto);
     }
 

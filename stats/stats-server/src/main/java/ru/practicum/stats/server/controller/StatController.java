@@ -3,6 +3,7 @@ package ru.practicum.stats.server.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -26,7 +27,7 @@ public class StatController {
     @PostMapping("/hit")
     @LogInputOutputAnnotaion
     @ResponseStatus(HttpStatus.CREATED)
-    public void addHit(@RequestBody final HitCreateDto hitCreateDto) {
+    public void addHit(@RequestBody @Valid final HitCreateDto hitCreateDto) {
         statService.addHit(hitCreateDto);
     }
 

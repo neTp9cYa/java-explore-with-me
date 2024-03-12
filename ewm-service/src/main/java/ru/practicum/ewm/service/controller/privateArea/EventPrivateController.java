@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service.controller.privateArea;
 
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class EventPrivateController {
     @PostMapping
     @LogInputOutputAnnotaion
     public EventFullDto create(@PathVariable final long userId,
-                               @RequestBody final EventCreateRequestDto eventCreateRequestDto) {
+                               @RequestBody @Valid final EventCreateRequestDto eventCreateRequestDto) {
         return eventService.create(userId, eventCreateRequestDto);
     }
 
@@ -41,7 +42,7 @@ public class EventPrivateController {
     @LogInputOutputAnnotaion
     public EventFullDto update(@PathVariable final long userId,
                                @PathVariable final long eventId,
-                               @RequestBody final EventUpdateRequestDto eventUpdateRequestDto) {
+                               @RequestBody @Valid final EventUpdateRequestDto eventUpdateRequestDto) {
         return eventService.update(userId, eventId, eventUpdateRequestDto);
     }
 
@@ -70,7 +71,7 @@ public class EventPrivateController {
     public EventParticipationRequestUpdateResponseDto updateRequests(
         @PathVariable final long userId,
         @PathVariable final long eventId,
-        @RequestBody final EventParticipationRequestUpdateRequestDto eventParticipationRequestUpdateRequestDto) {
+        @RequestBody @Valid final EventParticipationRequestUpdateRequestDto eventParticipationRequestUpdateRequestDto) {
 
         return eventService.updateRequests(userId, eventId, eventParticipationRequestUpdateRequestDto);
     }

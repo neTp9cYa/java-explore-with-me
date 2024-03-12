@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.controller.adminArea;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class EventAdminController {
     @PatchMapping("/{eventId}")
     @LogInputOutputAnnotaion
     public EventFullDto update(@PathVariable final int eventId,
-                               @RequestBody final EventUpdateAdminRequestDto eventDto) {
+                               @RequestBody @Valid final EventUpdateAdminRequestDto eventDto) {
         return eventService.updateByAdmin(eventId, eventDto);
     }
 
