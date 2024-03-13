@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         final ParticipationRequest creatingParticipationRequest = ParticipationRequest.builder()
             .user(user)
             .event(event)
-            //.status()
-            //.createdOn()
+            .status(ParticipationRequestStatus.PENDING)
+            .createdOn(LocalDateTime.now())
             .build();
 
         final ParticipationRequest createdParticipationRequest = participationRequestRepository

@@ -30,8 +30,8 @@ public class EventPublicController {
 
     @GetMapping("/{eventId}")
     @LogInputOutputAnnotaion
-    public EventFullDto getEvent(@PathVariable final long categoryId) {
-        return eventService.getEvent(categoryId);
+    public EventFullDto getEvent(@PathVariable final long eventId) {
+        return eventService.getPublicEvent(eventId);
     }
 
     @GetMapping

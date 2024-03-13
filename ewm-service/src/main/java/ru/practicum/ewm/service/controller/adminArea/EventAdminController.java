@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +41,8 @@ public class EventAdminController {
     public List<EventFullDto> getEvents(@RequestParam final List<Long> users,
                                         @RequestParam final List<EventState> states,
                                         @RequestParam final List<Long> categories,
-                                        @RequestParam final LocalDateTime rangeStart,
-                                        @RequestParam final LocalDateTime rangeEnd,
+                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeStart,
+                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
                                         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
                                         @RequestParam(defaultValue = "10") @Positive final int size) {
         final GetEventsAdminRequest getEventsAdminRequest = GetEventsAdminRequest.builder()

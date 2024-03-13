@@ -18,8 +18,8 @@ public interface EventService {
     List<EventFullDto> getEvents(final GetEventsAdminRequest getEventsAdminRequest);
     List<EventShortDto> getEvents(final GetEventsPublicRequest getEventsPublicRequest);
     List<EventShortDto> getEvents(final long userId, final GetEventsPrivateRequest getEventsPrivateRequest);
-    EventFullDto getEvent(final long eventId);
-    EventFullDto getEvent(final long userId, final long eventId);
+    EventFullDto getPublicEvent(final long eventId);
+    EventFullDto getPublicEvent(final long userId, final long eventId);
     EventFullDto create(final long userId, final EventCreateRequestDto eventCreateRequestDto);
     EventFullDto update(final long userId,
                         final long eventId,

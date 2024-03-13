@@ -1,12 +1,15 @@
 package ru.practicum.ewm.service.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.dto.event.EventCreateRequestDto;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.dto.event.EventParticipationRequestUpdateRequestDto;
@@ -109,6 +112,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventFullDto> getEvents(final GetEventsAdminRequest getEventsAdminRequest) {
         Specification<Event> specification = Specification
             .where(EventSpecification.users(getEventsAdminRequest.getUsers()))
@@ -121,7 +125,27 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(pageable);
 
-        return eventPage.stream().map(event -> eventMapper.toEventFullDto(event)).collect(Collectors.toList());
+        final List<EventFullDto> eventDtos = new ArrayList<>();
+        final List<Long> eventIds = new ArrayList<>();
+        eventPage.stream().forEach(event -> {
+            eventDtos.add(eventMapper.toEventFullDto(event));
+            eventIds.add(event.getId());
+        });
+        final Map<Long, Long> confirmedRequestCountForEvents = getCountForEventsByStatus(
+            eventIds,
+            ParticipationRequestStatus.CONFIRMED);
+        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
+                confirmedRequestCountForEvents.getOrDefault(eventDto.getId(), 0L)));
+
+        return eventDtos;
+    }
+
+    private Map<Long, Long> getCountForEventsByStatus(final List<Long> eventIds,
+                                                      final ParticipationRequestStatus status) {
+        return participationRequestRepository.getCountForEventsByStatus(eventIds, status)
+            .collect(Collectors.toMap(
+                countForEvent -> countForEvent.getEventId(),
+                countForEvent -> countForEvent.getCount()));
     }
 
     @Override
@@ -160,15 +184,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto getEvent(final long eventId) {
-        final Event event = eventRepository.findById(eventId)
+    public EventFullDto getPublicEvent(final long eventId) {
+        final Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
         return eventMapper.toEventFullDto(event);
     }
 
     @Override
-    public EventFullDto getEvent(final long userId, final long eventId) {
+    public EventFullDto getPublicEvent(final long userId, final long eventId) {
         final Event event = eventRepository.findByIdAndUser_Id(eventId, userId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
@@ -257,28 +281,43 @@ public class EventServiceImpl implements EventService {
         final long eventId,
         final EventParticipationRequestUpdateRequestDto eventParticipationRequestUpdateRequestDto) {
 
+        final User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+
         final Event event = eventRepository.findByIdAndUser_Id(eventId, userId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
         final List<ParticipationRequest> participationRequests = participationRequestRepository
             .findAllById(eventParticipationRequestUpdateRequestDto.getRequestIds());
-
-        for (final ParticipationRequest updatingParticipationRequest : participationRequests) {
-            if (updatingParticipationRequest.getEvent().getId() != eventId ||
-                updatingParticipationRequest.getUser().getId() != userId) {
+        for (final ParticipationRequest participationRequest : participationRequests) {
+            if (participationRequest.getEvent().getId() != eventId ||
+                participationRequest.getStatus() != ParticipationRequestStatus.PENDING) {
                 throw new IllegalArgumentException();
             }
         }
 
-        final ParticipationRequestStatus newStatus = ParticipationRequestStatus.from(
-            eventParticipationRequestUpdateRequestDto.getStatus().name());
-        final EventParticipationRequestUpdateResponseDto result = new EventParticipationRequestUpdateResponseDto();
-        for (final ParticipationRequest participationRequest : participationRequests) {
-            throw new UnsupportedOperationException();
-            //participationRequest.setStatus(newStatus);
+        final List<ParticipationRequest> confirmingParticipationRequests = new ArrayList<>();
+        final List<ParticipationRequest> rejectingParticipationRequests = new ArrayList<>();
+
+        if (event.getParticipantLimit() == 0) {
+            confirmingParticipationRequests.addAll(participationRequests);
+        } else {
+            final long confirmedRequestCount =
+                participationRequestRepository.countByEvent_IdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED);
+            final long availableRequestCount = event.getParticipantLimit() - confirmedRequestCount;
+            confirmingParticipationRequests.addAll(participationRequests.stream()
+                .limit(availableRequestCount)
+                .collect(Collectors.toList()));
+            rejectingParticipationRequests.addAll(participationRequests.stream()
+                .skip(availableRequestCount)
+                .collect(Collectors.toList()));
         }
 
-        return result;
+        confirmingParticipationRequests.forEach(request -> request.setStatus(ParticipationRequestStatus.CONFIRMED));
+        final List<ParticipationRequest> confirmedParticipationRequests = participationRequestRepository
+            .saveAll(confirmingParticipationRequests);
+
+        return eventMapper.toDto(confirmedParticipationRequests, rejectingParticipationRequests);
     }
 
     @Override

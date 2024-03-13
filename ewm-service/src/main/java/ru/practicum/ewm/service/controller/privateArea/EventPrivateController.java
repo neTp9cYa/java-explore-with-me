@@ -50,7 +50,7 @@ public class EventPrivateController {
     @LogInputOutputAnnotaion
     public EventFullDto getEvent(@PathVariable final long userId,
                                  @PathVariable final long eventId) {
-        return eventService.getEvent(userId, eventId);
+        return eventService.getPublicEvent(userId, eventId);
     }
 
     @GetMapping

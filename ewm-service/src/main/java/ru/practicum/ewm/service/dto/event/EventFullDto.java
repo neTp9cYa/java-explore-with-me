@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.ewm.service.dto.Location.LocationDto;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
 import ru.practicum.ewm.service.dto.user.UserShortDto;
@@ -11,6 +12,7 @@ import ru.practicum.ewm.service.model.EventState;
 
 @Builder
 @Getter
+@Setter
 public class EventFullDto {
     private long id;
     private boolean paid;
