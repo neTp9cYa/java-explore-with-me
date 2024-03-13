@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.dto.compilation.CompilationCreateRequestDto;
 import ru.practicum.ewm.service.dto.compilation.CompilationDto;
 import ru.practicum.ewm.service.dto.compilation.CompilationUpdateRequestDto;
@@ -29,6 +30,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final CompilationMapper compilationMapper;
 
     @Override
+    @Transactional
     public CompilationDto create(final CompilationCreateRequestDto compilationDto) {
         final Compilation creatingCompilation = compilationMapper.toCompilation(compilationDto);
         final Compilation createdCompilation = compilationRepository.save(creatingCompilation);
@@ -36,6 +38,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public CompilationDto update(final long compilationId, final CompilationUpdateRequestDto compilationDto) {
         final Compilation updatingCompilation = compilationRepository.findById(compilationId)
             .orElseThrow(() ->
@@ -59,6 +62,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public void delete(long compilationId) {
         final Compilation deletingCompilation = compilationRepository.findById(compilationId)
             .orElseThrow(() ->
@@ -68,6 +72,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CompilationDto getCompilation(long compilationId) {
         final Compilation compilation = compilationRepository.findById(compilationId)
             .orElseThrow(() ->
@@ -77,6 +82,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CompilationDto> getCompilations(GetCompilationsRequest getCompilationsRequest) {
         Specification<Compilation> specification = Specification
             .where(CompilationSpecification.pinned(getCompilationsRequest.getPinned()));

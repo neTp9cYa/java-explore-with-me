@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.dto.user.UserCreateRequestDto;
 import ru.practicum.ewm.service.dto.user.UserFullDto;
 import ru.practicum.ewm.service.exception.NotFoundException;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
+    @Transactional
     public UserFullDto create(final UserCreateRequestDto userDto) {
         final User creatingUser = userMapper.toUser(userDto);
         final User createdUser = userRepository.save(creatingUser);
@@ -31,6 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(long userId) {
         final User deletingUser = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -39,6 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserFullDto> getUsers(final GetUsersRequest getUsersRequest) {
         if (getUsersRequest.getIds() == null || getUsersRequest.getIds().isEmpty()) {
             final Pageable pageable = FlexPageRequest.of(getUsersRequest.getFrom(), getUsersRequest.getSize());

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.dto.category.CategoryCreateRequestDto;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
 import ru.practicum.ewm.service.dto.category.CategoryUpdateRequestDto;
@@ -26,6 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
+    @Transactional
     public CategoryDto create(final CategoryCreateRequestDto categoryDto) {
         final Category creatingCategory = categoryMapper.toCategory(categoryDto);
         final Category createdCategory = categoryRepository.save(creatingCategory);
@@ -33,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto update(final long categoryId, final CategoryUpdateRequestDto categoryDto) {
         final Category updateingCategory = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new NotFoundException(String.format("Category with id %d not found", categoryId)));
@@ -44,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void delete(final long categoryId) {
         final Category deletingCategory = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new NotFoundException(String.format("Category with id %d not found", categoryId)));
@@ -52,6 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CategoryDto getCategory(long categoryId) {
         final Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new NotFoundException(String.format("Category with id %d not found", categoryId)));
@@ -60,6 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(GetCategoriesRequest getCategoriesRequest) {
         final Pageable pageable = FlexPageRequest.of(getCategoriesRequest.getFrom(), getCategoriesRequest.getSize());
 

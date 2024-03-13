@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.service.dto.event.EventBaseDto;
 import ru.practicum.ewm.service.dto.event.EventCreateRequestDto;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.dto.event.EventParticipationRequestUpdateRequestDto;
@@ -54,6 +55,7 @@ public class EventServiceImpl implements EventService {
     private final StatsClient statsClient;
 
     @Override
+    @Transactional
     public EventFullDto updateByAdmin(final long eventId, final EventUpdateAdminRequestDto eventDto) {
         final Event updatingEvent = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
@@ -108,7 +110,11 @@ public class EventServiceImpl implements EventService {
 
         final Event updatedEvent = eventRepository.save(updatingEvent);
 
-        return eventMapper.toEventFullDto(updatedEvent);
+        final EventFullDto updatedEventDto = eventMapper.toEventFullDto(updatedEvent);
+
+        enrichWithConfirmedReqeusts(updatedEventDto);
+
+        return updatedEventDto;
     }
 
     @Override
@@ -125,30 +131,38 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(pageable);
 
-        final List<EventFullDto> eventDtos = new ArrayList<>();
-        final List<Long> eventIds = new ArrayList<>();
-        eventPage.stream().forEach(event -> {
-            eventDtos.add(eventMapper.toEventFullDto(event));
-            eventIds.add(event.getId());
-        });
-        final Map<Long, Long> confirmedRequestCountForEvents = getCountForEventsByStatus(
-            eventIds,
-            ParticipationRequestStatus.CONFIRMED);
-        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
-                confirmedRequestCountForEvents.getOrDefault(eventDto.getId(), 0L)));
+        final List<EventFullDto> eventDtos = eventPage.stream()
+            .map(event -> eventMapper.toEventFullDto(event))
+            .collect(Collectors.toList());
+
+        enrichWithConfirmedReqeusts(eventDtos);
 
         return eventDtos;
     }
 
-    private Map<Long, Long> getCountForEventsByStatus(final List<Long> eventIds,
-                                                      final ParticipationRequestStatus status) {
-        return participationRequestRepository.getCountForEventsByStatus(eventIds, status)
+    private void enrichWithConfirmedReqeusts(final List<? extends EventBaseDto> eventDtos) {
+        final List<Long> eventIds = eventDtos.stream()
+            .map(EventBaseDto::getId)
+            .collect(Collectors.toList());
+        final Map<Long, Long> confirmedRequestCountForEvents = participationRequestRepository
+            .getCountForEventsByStatus(eventIds, ParticipationRequestStatus.CONFIRMED)
             .collect(Collectors.toMap(
                 countForEvent -> countForEvent.getEventId(),
                 countForEvent -> countForEvent.getCount()));
+        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
+            confirmedRequestCountForEvents.getOrDefault(eventDto.getId(), 0L)));
+    }
+
+    private void enrichWithConfirmedReqeusts(final EventBaseDto eventDto) {
+        participationRequestRepository
+            .getCountForEventsByStatus(List.of(eventDto.getId()), ParticipationRequestStatus.CONFIRMED)
+            .findFirst()
+            .ifPresent(participationRequestCount -> eventDto
+                .setConfirmedRequests(participationRequestCount.getCount()));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDto> getEvents(final GetEventsPublicRequest getEventsPublicRequest) {
         Specification<Event> specification = Specification
             .where(EventSpecification.text(getEventsPublicRequest.getText()))
@@ -166,10 +180,18 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        return eventPage.stream().map(event -> eventMapper.toEventShortDto(event)).collect(Collectors.toList());
+        final List<EventShortDto> eventDtos = eventPage.stream()
+            .map(event -> eventMapper.toEventShortDto(event))
+            .collect(Collectors.toList());
+
+        enrichWithConfirmedReqeusts(eventDtos);
+
+        return eventDtos;
+
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EventShortDto> getEvents(final long userId, final GetEventsPrivateRequest getEventsPrivateRequest) {
         Specification<Event> specification = Specification
             .where(EventSpecification.user(userId));
@@ -180,26 +202,43 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        return eventPage.stream().map(event -> eventMapper.toEventShortDto(event)).collect(Collectors.toList());
+        final List<EventShortDto> eventDtos = eventPage.stream()
+            .map(event -> eventMapper.toEventShortDto(event))
+            .collect(Collectors.toList());
+
+        enrichWithConfirmedReqeusts(eventDtos);
+
+        return eventDtos;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventFullDto getPublicEvent(final long eventId) {
         final Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
-        return eventMapper.toEventFullDto(event);
+        final EventFullDto eventDto = eventMapper.toEventFullDto(event);
+
+        enrichWithConfirmedReqeusts(eventDto);
+
+        return eventDto;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public EventFullDto getPublicEvent(final long userId, final long eventId) {
         final Event event = eventRepository.findByIdAndUser_Id(eventId, userId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
-        return eventMapper.toEventFullDto(event);
+        final EventFullDto eventDto = eventMapper.toEventFullDto(event);
+
+        enrichWithConfirmedReqeusts(eventDto);
+
+        return eventDto;
     }
 
     @Override
+    @Transactional
     public EventFullDto create(long userId, final EventCreateRequestDto eventCreateRequestDto) {
 
         final User user = userRepository.findById(userId)
@@ -216,6 +255,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto update(final long userId,
                                final long eventId,
                                final EventUpdateRequestDto eventDto) {
@@ -276,6 +316,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventParticipationRequestUpdateResponseDto updateRequests(
         final long userId,
         final long eventId,
@@ -321,6 +362,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequests(final long userId, final long eventId) {
         final List<ParticipationRequest> participationRequests = participationRequestRepository
             .findAllByUser_IdAndEvent_Id(userId, eventId);

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
 import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.service.mapper.api.ParticipationRequestMapper;
@@ -27,6 +28,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public ParticipationRequestDto create(final long userId, final long eventId) {
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -48,6 +50,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto cancel(final long userId, final long requestId) {
         final ParticipationRequest updatingParticipationRequest = participationRequestRepository
             .findByIdAndUser_Id(requestId, userId)
@@ -62,6 +65,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequests(final long userId) {
         final List<ParticipationRequest> participationRequests = participationRequestRepository
             .findAllByUser_Id(userId);
