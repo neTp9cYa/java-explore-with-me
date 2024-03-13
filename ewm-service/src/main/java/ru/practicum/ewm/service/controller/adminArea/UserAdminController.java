@@ -25,6 +25,7 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 @RestController
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
+@Validated
 public class UserAdminController {
 
     private final UserService userService;

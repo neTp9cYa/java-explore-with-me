@@ -4,6 +4,7 @@ import java.util.List;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 @RestController
 @RequestMapping("/compilations")
 @RequiredArgsConstructor
+@Validated
 public class CompilationPublicController {
 
     private final CompilationService compilationService;

@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
+@Validated
 public class EventPublicController {
 
     private final EventService eventService;
@@ -36,16 +39,17 @@ public class EventPublicController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<EventShortDto> getEvents(@RequestParam(required = false) final String text,
-                                         @RequestParam(required = false) final List<Long> categories,
-                                         @RequestParam(required = false) final Boolean paid,
-                                         @RequestParam(required = false) final LocalDateTime rangeStart,
-                                         @RequestParam(required = false) final LocalDateTime rangeEnd,
-                                         @RequestParam(defaultValue = "false") final boolean onlyAvailable,
-                                         @RequestParam(defaultValue = "EVENT_DATE") final EventSort sort,
-                                         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                         @RequestParam(defaultValue = "10") @Positive final int size,
-                                         final HttpServletRequest request) {
+    public List<EventShortDto> getEvents(
+        @RequestParam(required = false) final String text,
+        @RequestParam(required = false) final List<Long> categories,
+        @RequestParam(required = false) final Boolean paid,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeStart,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
+        @RequestParam(defaultValue = "false") final boolean onlyAvailable,
+        @RequestParam(defaultValue = "EVENT_DATE") final EventSort sort,
+        @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
+        @RequestParam(defaultValue = "10") @Positive final int size,
+        final HttpServletRequest request) {
 
         final GetEventsPublicRequest getEventsPublicRequest = GetEventsPublicRequest.builder()
             .state(EventState.PUBLISHED)
