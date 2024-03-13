@@ -3,6 +3,7 @@ package ru.practicum.ewm.service.controller.adminArea;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,11 @@ public class EventAdminController {
                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
                                         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
                                         @RequestParam(defaultValue = "10") @Positive final int size) {
+
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new ValidationException("rangeStart should be less or equal rangeEnd");
+        }
+
         final GetEventsAdminRequest getEventsAdminRequest = GetEventsAdminRequest.builder()
             .users(users)
             .states(states)

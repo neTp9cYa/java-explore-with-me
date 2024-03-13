@@ -3,6 +3,7 @@ package ru.practicum.ewm.service.controller.publicArea;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,10 @@ public class EventPublicController {
         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
         @RequestParam(defaultValue = "10") @Positive final int size,
         final HttpServletRequest request) {
+
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new ValidationException("rangeStart should be less or equal rangeEnd");
+        }
 
         final GetEventsPublicRequest getEventsPublicRequest = GetEventsPublicRequest.builder()
             .state(EventState.PUBLISHED)
