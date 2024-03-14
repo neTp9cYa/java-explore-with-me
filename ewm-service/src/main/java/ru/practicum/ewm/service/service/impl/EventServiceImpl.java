@@ -315,6 +315,7 @@ public class EventServiceImpl implements EventService {
 
         final List<ParticipationRequest> participationRequests = participationRequestRepository
             .findAllById(eventParticipationRequestUpdateRequestDto.getRequestIds());
+
         for (final ParticipationRequest participationRequest : participationRequests) {
             if (participationRequest.getEvent().getId() != eventId ||
                 participationRequest.getStatus() != ParticipationRequestStatus.PENDING) {
@@ -325,18 +326,32 @@ public class EventServiceImpl implements EventService {
         final List<ParticipationRequest> confirmingParticipationRequests = new ArrayList<>();
         final List<ParticipationRequest> rejectingParticipationRequests = new ArrayList<>();
 
-        if (event.getParticipantLimit() == 0) {
-            confirmingParticipationRequests.addAll(participationRequests);
-        } else {
-            final long confirmedRequestCount =
-                participationRequestRepository.countByEvent_IdAndStatus(eventId, ParticipationRequestStatus.CONFIRMED);
-            final long availableRequestCount = event.getParticipantLimit() - confirmedRequestCount;
-            confirmingParticipationRequests.addAll(participationRequests.stream()
-                .limit(availableRequestCount)
-                .collect(Collectors.toList()));
-            rejectingParticipationRequests.addAll(participationRequests.stream()
-                .skip(availableRequestCount)
-                .collect(Collectors.toList()));
+        switch (eventParticipationRequestUpdateRequestDto.getStatus()) {
+            case CONFIRMED:
+                if (event.getParticipantLimit() == 0) {
+                    confirmingParticipationRequests.addAll(participationRequests);
+                } else {
+                    final long confirmedRequestCount =
+                        participationRequestRepository.countByEvent_IdAndStatus(
+                            eventId,
+                            ParticipationRequestStatus.CONFIRMED);
+                    if (event.getParticipantLimit() <= confirmedRequestCount) {
+                        throw new IllegalStateException();
+                    }
+                    final long availableRequestCount = event.getParticipantLimit() - confirmedRequestCount;
+                    confirmingParticipationRequests.addAll(participationRequests.stream()
+                        .limit(availableRequestCount)
+                        .collect(Collectors.toList()));
+                    rejectingParticipationRequests.addAll(participationRequests.stream()
+                        .skip(availableRequestCount)
+                        .collect(Collectors.toList()));
+                }
+                break;
+            case REJECTED:
+                rejectingParticipationRequests.addAll(participationRequests);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
 
         confirmingParticipationRequests.forEach(request -> request.setStatus(ParticipationRequestStatus.CONFIRMED));
