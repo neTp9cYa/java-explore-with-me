@@ -48,25 +48,27 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         final long cofirmedRequestCount = participationRequestRepository
-            .getCountForEventByStatus(
+            .getCountForEventByStatuses(
                 eventId,
-                ParticipationRequestStatus.CONFIRMED)
+                List.of(ParticipationRequestStatus.PENDING, ParticipationRequestStatus.CONFIRMED))
             .map(participationRequestCount -> participationRequestCount.getCount())
             .orElseGet(() -> 0L);
 
         final ParticipationRequest creatingParticipationRequest = ParticipationRequest.builder()
             .user(user)
             .event(event)
-            .status(ParticipationRequestStatus.PENDING)
+            //.status()
             .createdOn(LocalDateTime.now())
             .build();
 
         if (event.getParticipantLimit() == 0) {
             creatingParticipationRequest.setStatus(ParticipationRequestStatus.CONFIRMED);
         } else if (event.getParticipantLimit() > cofirmedRequestCount) {
-            event.setState(event.isRequestModeration() ? EventState.PENDING : EventState.PUBLISHED);
+            creatingParticipationRequest.setStatus(event.isRequestModeration()
+                ? ParticipationRequestStatus.PENDING
+                : ParticipationRequestStatus.CONFIRMED);
         } else {
-            creatingParticipationRequest.setStatus(ParticipationRequestStatus.REJECTED);
+            throw new IllegalStateException();
         }
 
         final ParticipationRequest createdParticipationRequest = participationRequestRepository
