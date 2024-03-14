@@ -27,6 +27,7 @@ public class CompilationAdminController {
     private final CompilationService compilationService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @LogInputOutputAnnotaion
     public CompilationDto create(@RequestBody @Valid final CompilationCreateRequestDto compilationDto) {
         return compilationService.create(compilationDto);

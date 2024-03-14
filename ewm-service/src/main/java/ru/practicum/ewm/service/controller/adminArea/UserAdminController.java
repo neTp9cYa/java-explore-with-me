@@ -31,6 +31,7 @@ public class UserAdminController {
     private final UserService userService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @LogInputOutputAnnotaion
     public UserFullDto create(@RequestBody @Valid final UserCreateRequestDto userDto) {
         return userService.create(userDto);

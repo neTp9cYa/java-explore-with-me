@@ -27,6 +27,7 @@ public class CategoryAdminController {
     private final CategoryService categoryService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @LogInputOutputAnnotaion
     public CategoryDto create(@RequestBody @Valid final CategoryCreateRequestDto categoryDto) {
         return categoryService.create(categoryDto);
