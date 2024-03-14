@@ -30,8 +30,7 @@ public class CategoryPublicController {
     @GetMapping("/{categoryId}")
     @LogInputOutputAnnotaion
     @CollectRequestStatisticAnnotaion
-    public CategoryDto getCategory(@PathVariable final long categoryId,
-                                   final HttpServletRequest request) {
+    public CategoryDto getCategory(@PathVariable final long categoryId) {
         return categoryService.getCategory(categoryId);
     }
 
@@ -39,8 +38,7 @@ public class CategoryPublicController {
     @LogInputOutputAnnotaion
     @CollectRequestStatisticAnnotaion
     public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                           @RequestParam(defaultValue = "10") @Positive final int size,
-                                           final HttpServletRequest request) {
+                                           @RequestParam(defaultValue = "10") @Positive final int size) {
         final GetCategoriesRequest getCategoriesRequest = GetCategoriesRequest.builder()
             .from(from)
             .size(size)

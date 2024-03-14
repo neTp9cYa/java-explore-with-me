@@ -30,8 +30,7 @@ public class CompilationPublicController {
     @GetMapping("/{compilationId}")
     @LogInputOutputAnnotaion
     @CollectRequestStatisticAnnotaion
-    public CompilationDto get(@PathVariable(name = "compId") final long compilationId,
-                              final HttpServletRequest request) {
+    public CompilationDto get(@PathVariable(name = "compId") final long compilationId) {
         return compilationService.getCompilation(compilationId);
     }
 
@@ -40,8 +39,7 @@ public class CompilationPublicController {
     @CollectRequestStatisticAnnotaion
     public List<CompilationDto> search(@RequestParam final Boolean pinned,
                                        @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                       @RequestParam(defaultValue = "10") @Positive final int size,
-                                       final HttpServletRequest request) {
+                                       @RequestParam(defaultValue = "10") @Positive final int size) {
         final GetCompilationsRequest getCompilationsRequest = GetCompilationsRequest.builder()
             .pinned(pinned)
             .from(from)

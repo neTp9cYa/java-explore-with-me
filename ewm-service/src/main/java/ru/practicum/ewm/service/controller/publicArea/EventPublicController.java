@@ -35,8 +35,7 @@ public class EventPublicController {
     @GetMapping("/{eventId}")
     @LogInputOutputAnnotaion
     @CollectRequestStatisticAnnotaion
-    public EventFullDto getEvent(@PathVariable final long eventId,
-                                 final HttpServletRequest request) {
+    public EventFullDto getEvent(@PathVariable final long eventId) {
         return eventService.getPublicEvent(eventId);
     }
 
