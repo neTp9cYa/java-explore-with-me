@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.model;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,5 +42,6 @@ public class Compilation {
         name = "compilation_events",
         joinColumns = @JoinColumn(name = "compilation_id"),
         inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<Event> events;
+    @Builder.Default
+    private Set<Event> events = new HashSet<>();
 }
