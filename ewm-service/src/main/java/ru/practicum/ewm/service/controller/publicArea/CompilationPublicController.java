@@ -30,7 +30,7 @@ public class CompilationPublicController {
     @GetMapping("/{compilationId}")
     @LogInputOutputAnnotaion
     @CollectRequestStatisticAnnotaion
-    public CompilationDto get(@PathVariable(name = "compId") final long compilationId) {
+    public CompilationDto get(@PathVariable final long compilationId) {
         return compilationService.getCompilation(compilationId);
     }
 
