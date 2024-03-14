@@ -251,6 +251,10 @@ public class EventServiceImpl implements EventService {
         final Event updatingEvent = eventRepository.findByIdAndUser_Id(eventId, userId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
+        if (updatingEvent.getState() != EventState.PENDING) {
+            throw new IllegalStateException();
+        }
+
         if (eventDto.getAnnotation() != null) {
             updatingEvent.setAnnotation(eventDto.getAnnotation());
         }

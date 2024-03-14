@@ -48,9 +48,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         final long cofirmedRequestCount = participationRequestRepository
-            .getCountForEventByStatuses(
-                eventId,
-                List.of(ParticipationRequestStatus.PENDING, ParticipationRequestStatus.CONFIRMED))
+            .getCountForEventByStatus(eventId, ParticipationRequestStatus.CONFIRMED)
             .map(participationRequestCount -> participationRequestCount.getCount())
             .orElseGet(() -> 0L);
 
