@@ -37,12 +37,11 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto create(final CompilationCreateRequestDto compilationDto) {
         final Compilation creatingCompilation = compilationMapper.toCompilation(compilationDto);
 
-        compilationDto.getEvents().ifPresent(eventIds -> {
-            if (eventIds.isEmpty()) { return; }
-            final List<Event> events = eventRepository.findAllById(eventIds);
-            if (eventIds.size() != events.size()) { throw new IllegalArgumentException(); }
+        if (compilationDto.getEvents().size() > 0) {
+            final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
+            if (compilationDto.getEvents().size() != events.size()) { throw new IllegalArgumentException(); }
             creatingCompilation.setEvents(new HashSet<>(events));
-        });
+        }
 
         final Compilation createdCompilation = compilationRepository.save(creatingCompilation);
         return compilationMapper.toCompilationDto(createdCompilation);
