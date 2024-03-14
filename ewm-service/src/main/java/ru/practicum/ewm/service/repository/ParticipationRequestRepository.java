@@ -16,7 +16,7 @@ import ru.practicum.ewm.service.repository.dto.ParticipationRequestCount;
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
     List<ParticipationRequest> findAllByUser_Id(final long userId);
 
-    List<ParticipationRequest> findAllByUser_IdAndEvent_Id(final long userId, final long eventId);
+    List<ParticipationRequest> findAllByEvent_User_IdAndEvent_Id(final long userId, final long eventId);
 
     Optional<ParticipationRequest> findByIdAndUser_Id(final long id, final long userId);
 

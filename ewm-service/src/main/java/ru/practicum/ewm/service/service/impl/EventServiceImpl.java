@@ -383,7 +383,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequests(final long userId, final long eventId) {
         final List<ParticipationRequest> participationRequests = participationRequestRepository
-            .findAllByUser_IdAndEvent_Id(userId, eventId);
+            .findAllByEvent_User_IdAndEvent_Id(userId, eventId);
 
         return participationRequests.stream()
             .map(participationRequest -> participationRequestMapper.toParticipationRequestDto(participationRequest))
