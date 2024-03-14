@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 public class CompilationCreateRequestDto {
-    private List<Long> events = new ArrayList<>();
+    private List<Long> events;
     private boolean pinned = false;
 
     @NotBlank
