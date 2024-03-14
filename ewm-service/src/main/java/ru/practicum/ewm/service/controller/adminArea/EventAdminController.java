@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.ewm.service.dto.event.EventUpdateAdminRequestDto;
 import ru.practicum.ewm.service.dto.event.EventFullDto;
-import ru.practicum.ewm.service.dto.event.EventShortDto;
+import ru.practicum.ewm.service.dto.event.EventUpdateAdminRequestDto;
 import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.request.GetEventsAdminRequest;
@@ -44,8 +43,10 @@ public class EventAdminController {
     public List<EventFullDto> getEvents(@RequestParam final List<Long> users,
                                         @RequestParam final List<EventState> states,
                                         @RequestParam final List<Long> categories,
-                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeStart,
-                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
+                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                        final LocalDateTime rangeStart,
+                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                        final LocalDateTime rangeEnd,
                                         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
                                         @RequestParam(defaultValue = "10") @Positive final int size) {
 

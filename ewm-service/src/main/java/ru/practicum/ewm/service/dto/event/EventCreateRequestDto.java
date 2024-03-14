@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -28,6 +29,7 @@ public class EventCreateRequestDto {
     private String description;
 
     @NotNull
+    @Future
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
