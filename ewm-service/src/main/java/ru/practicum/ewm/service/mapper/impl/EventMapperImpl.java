@@ -78,6 +78,8 @@ public class EventMapperImpl implements EventMapper {
             .state(EventState.PENDING)
             .paid(eventDto.getPaid())
             .eventDate(eventDto.getEventDate())
+            .latitude(eventDto.getLocation().getLat())
+            .longitude(eventDto.getLocation().getLon())
             .createdOn(LocalDateTime.now())
             .publishedOn(null)
             .user(user)

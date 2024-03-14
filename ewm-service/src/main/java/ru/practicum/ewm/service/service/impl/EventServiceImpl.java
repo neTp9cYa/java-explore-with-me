@@ -82,6 +82,15 @@ public class EventServiceImpl implements EventService {
             updatingEvent.setEventDate(eventDto.getEventDate());
         }
 
+        if (eventDto.getLocation() != null) {
+            if (eventDto.getLocation().getLat() != null) {
+                updatingEvent.setLatitude(eventDto.getLocation().getLat());
+            }
+            if (eventDto.getLocation().getLon() != null) {
+                updatingEvent.setLongitude(eventDto.getLocation().getLon());
+            }
+        }
+
         if (eventDto.getPaid() != null) {
             updatingEvent.setPaid(eventDto.getPaid());
         }
@@ -272,6 +281,15 @@ public class EventServiceImpl implements EventService {
 
         if (eventDto.getEventDate() != null) {
             updatingEvent.setEventDate(eventDto.getEventDate());
+        }
+
+        if (eventDto.getLocation() != null) {
+            if (eventDto.getLocation().getLat() != null) {
+                updatingEvent.setLatitude(eventDto.getLocation().getLat());
+            }
+            if (eventDto.getLocation().getLon() != null) {
+                updatingEvent.setLongitude(eventDto.getLocation().getLon());
+            }
         }
 
         if (eventDto.getPaid() != null) {
