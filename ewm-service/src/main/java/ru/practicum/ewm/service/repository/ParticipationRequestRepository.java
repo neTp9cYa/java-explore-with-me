@@ -28,4 +28,11 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
         "GROUP BY pr.event.id")
     Stream<ParticipationRequestCount> getCountForEventsByStatus(final List<Long> eventIds,
                                                                 final ParticipationRequestStatus status);
+
+    @Query("SELECT new ru.practicum.ewm.service.repository.dto.ParticipationRequestCount(pr.event.id, count(pr.id)) " +
+        "FROM ParticipationRequest pr " +
+        "WHERE pr.id = :eventId and pr.status = :status " +
+        "GROUP BY pr.event.id")
+    Optional<ParticipationRequestCount> getCountForEventByStatus(final long eventId,
+                                                                  final ParticipationRequestStatus status);
 }

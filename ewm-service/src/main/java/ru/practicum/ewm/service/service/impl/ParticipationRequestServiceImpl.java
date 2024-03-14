@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,12 +11,14 @@ import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
 import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.service.mapper.api.ParticipationRequestMapper;
 import ru.practicum.ewm.service.model.Event;
+import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.model.ParticipationRequest;
 import ru.practicum.ewm.service.model.ParticipationRequestStatus;
 import ru.practicum.ewm.service.model.User;
 import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.service.repository.UserRepository;
+import ru.practicum.ewm.service.repository.dto.ParticipationRequestCount;
 import ru.practicum.ewm.service.service.api.ParticipationRequestService;
 
 @Service
@@ -36,12 +39,27 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         final Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
+        final long cofirmedRequestCount = participationRequestRepository
+            .getCountForEventByStatus(
+                eventId,
+                ParticipationRequestStatus.CONFIRMED)
+            .map(participationRequestCount -> participationRequestCount.getCount())
+            .orElseGet(() -> 0L);
+
         final ParticipationRequest creatingParticipationRequest = ParticipationRequest.builder()
             .user(user)
             .event(event)
             .status(ParticipationRequestStatus.PENDING)
             .createdOn(LocalDateTime.now())
             .build();
+
+        if (event.getParticipantLimit() == 0) {
+            creatingParticipationRequest.setStatus(ParticipationRequestStatus.CONFIRMED);
+        } else if (event.getParticipantLimit() > cofirmedRequestCount) {
+            event.setState(event.isRequestModeration() ? EventState.PENDING : EventState.PUBLISHED);
+        } else {
+            creatingParticipationRequest.setStatus(ParticipationRequestStatus.REJECTED);
+        }
 
         final ParticipationRequest createdParticipationRequest = participationRequestRepository
             .save(creatingParticipationRequest);
