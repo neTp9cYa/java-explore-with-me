@@ -1,7 +1,6 @@
 package ru.practicum.ewm.service.dto.event;
 
 import ru.practicum.ewm.service.model.EventState;
-import ru.practicum.ewm.service.model.ParticipationRequestStatus;
 
 public enum EventUpdateAdminStateAction {
     PUBLISH_EVENT,

@@ -7,7 +7,6 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.ewm.service.dto.Location.LocationUpdateRequestDto;
 
 @Getter

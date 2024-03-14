@@ -44,6 +44,7 @@ public class CompilationAdminController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @LogInputOutputAnnotaion
     public void delete(@PathVariable final long compilationId) {
-        compilationService.delete(compilationId);;
+        compilationService.delete(compilationId);
+        ;
     }
 }

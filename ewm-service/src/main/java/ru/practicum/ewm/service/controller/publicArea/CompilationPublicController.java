@@ -1,7 +1,6 @@
 package ru.practicum.ewm.service.controller.publicArea;
 
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.compilation.CompilationDto;
 import ru.practicum.ewm.service.service.api.CompilationService;
+import ru.practicum.ewm.service.service.request.GetCompilationsRequest;
 import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
 import ru.practicum.stats.client.service.StatService;
-import ru.practicum.ewm.service.service.request.GetCompilationsRequest;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController

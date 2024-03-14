@@ -1,11 +1,7 @@
 package ru.practicum.ewm.service.repository.specification;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 import ru.practicum.ewm.service.model.Compilation;
-import ru.practicum.ewm.service.model.Event;
 
 public class CompilationSpecification {
 

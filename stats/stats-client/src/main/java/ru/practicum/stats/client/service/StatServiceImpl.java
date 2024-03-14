@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.practicum.stats.client.service.StatService;
 import ru.practicum.stats.client.client.StatsClient;
 import ru.practicum.stats.dto.HitCreateDto;
 

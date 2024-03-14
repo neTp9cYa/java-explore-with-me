@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.category.CategoryCreateRequestDto;
-import ru.practicum.ewm.service.dto.category.CategoryUpdateRequestDto;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
+import ru.practicum.ewm.service.dto.category.CategoryUpdateRequestDto;
 import ru.practicum.ewm.service.service.api.CategoryService;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 

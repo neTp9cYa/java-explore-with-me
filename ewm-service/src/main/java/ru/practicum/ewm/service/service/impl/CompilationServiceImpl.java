@@ -19,7 +19,6 @@ import ru.practicum.ewm.service.model.Event;
 import ru.practicum.ewm.service.repository.CompilationRepository;
 import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.specification.CompilationSpecification;
-import ru.practicum.ewm.service.repository.specification.EventSpecification;
 import ru.practicum.ewm.service.service.api.CompilationService;
 import ru.practicum.ewm.service.service.request.GetCompilationsRequest;
 import ru.practicum.utils.pagination.FlexPageRequest;
@@ -39,7 +38,9 @@ public class CompilationServiceImpl implements CompilationService {
 
         if (compilationDto.getEvents().size() > 0) {
             final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
-            if (compilationDto.getEvents().size() != events.size()) { throw new IllegalArgumentException(); }
+            if (compilationDto.getEvents().size() != events.size()) {
+                throw new IllegalArgumentException();
+            }
             creatingCompilation.setEvents(new HashSet<>(events));
         }
 
@@ -59,7 +60,9 @@ public class CompilationServiceImpl implements CompilationService {
                 updatingCompilation.setEvents(new HashSet<>());
             } else {
                 final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
-                if (compilationDto.getEvents().size() != events.size()) { throw new IllegalArgumentException(); }
+                if (compilationDto.getEvents().size() != events.size()) {
+                    throw new IllegalArgumentException();
+                }
                 updatingCompilation.setEvents(new HashSet<>(events));
             }
         }

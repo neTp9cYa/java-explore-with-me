@@ -2,7 +2,6 @@ package ru.practicum.ewm.service.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import ru.practicum.ewm.service.model.User;
 import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.service.repository.UserRepository;
-import ru.practicum.ewm.service.repository.dto.ParticipationRequestCount;
 import ru.practicum.ewm.service.service.api.ParticipationRequestService;
 
 @Service

@@ -8,7 +8,10 @@ import ru.practicum.ewm.service.model.User;
 
 public interface UserMapper {
     User toUser(final UserCreateRequestDto userCreateRequestDto);
+
     UserFullDto toUserFullDto(final User user);
+
     UserShortDto toUserShortDto(final User user);
+
     List<UserFullDto> toUserDtos(final List<User> users);
 }

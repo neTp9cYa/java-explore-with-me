@@ -8,8 +8,12 @@ import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
 
 public interface CategoryService {
     CategoryDto create(final CategoryCreateRequestDto categoryDto);
+
     CategoryDto update(final long categoryId, final CategoryUpdateRequestDto categoryDto);
+
     void delete(final long categoryId);
+
     CategoryDto getCategory(final long categoryId);
+
     List<CategoryDto> getCategories(final GetCategoriesRequest getCategoriesRequest);
 }

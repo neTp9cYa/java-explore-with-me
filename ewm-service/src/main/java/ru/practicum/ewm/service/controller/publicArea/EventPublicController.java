@@ -2,7 +2,6 @@ package ru.practicum.ewm.service.controller.publicArea;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +17,9 @@ import ru.practicum.ewm.service.dto.event.EventShortDto;
 import ru.practicum.ewm.service.dto.event.EventSort;
 import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.service.api.EventService;
+import ru.practicum.ewm.service.service.request.GetEventsPublicRequest;
 import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
 import ru.practicum.stats.client.service.StatService;
-import ru.practicum.ewm.service.service.request.GetEventsPublicRequest;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController

@@ -12,8 +12,11 @@ import ru.practicum.ewm.service.model.User;
 
 public interface EventMapper {
     EventFullDto toEventFullDto(final Event event);
+
     EventShortDto toEventShortDto(final Event event);
+
     Event toEvent(final EventCreateRequestDto eventDto, final User user, final Category category);
+
     EventParticipationRequestUpdateResponseDto toDto(final List<ParticipationRequest> confirmedRequest,
                                                      final List<ParticipationRequest> rejectedRequest);
 }

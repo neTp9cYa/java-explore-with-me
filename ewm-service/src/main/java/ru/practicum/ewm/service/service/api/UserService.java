@@ -7,6 +7,8 @@ import ru.practicum.ewm.service.service.request.GetUsersRequest;
 
 public interface UserService {
     UserFullDto create(final UserCreateRequestDto userDto);
+
     void delete(final long userId);
+
     List<UserFullDto> getUsers(final GetUsersRequest getUsersRequest);
 }

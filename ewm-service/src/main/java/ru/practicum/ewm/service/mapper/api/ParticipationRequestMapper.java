@@ -6,5 +6,6 @@ import ru.practicum.ewm.service.model.ParticipationRequest;
 
 public interface ParticipationRequestMapper {
     ParticipationRequestDto toParticipationRequestDto(final ParticipationRequest participationRequest);
+
     List<ParticipationRequestDto> toParticipationRequestDtos(final List<ParticipationRequest> participationRequests);
 }

@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
-import ru.practicum.ewm.service.dto.event.EventSort;
 import ru.practicum.ewm.service.model.EventState;
 
 @Getter

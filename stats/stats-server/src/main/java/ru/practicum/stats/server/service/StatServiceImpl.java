@@ -35,10 +35,10 @@ public class StatServiceImpl implements StatService {
 
         return unique
             ? (urisOptional.isEmpty()
-                ? hitRepository.getUniqueHitsStats(start, end)
-                : hitRepository.getUniqueHitsStats(start, end, urisOptional.get()))
+            ? hitRepository.getUniqueHitsStats(start, end)
+            : hitRepository.getUniqueHitsStats(start, end, urisOptional.get()))
             : (urisOptional.isEmpty()
-                ? hitRepository.getHitsStats(start, end)
-                : hitRepository.getHitsStats(start, end, urisOptional.get()));
+            ? hitRepository.getHitsStats(start, end)
+            : hitRepository.getHitsStats(start, end, urisOptional.get()));
     }
 }

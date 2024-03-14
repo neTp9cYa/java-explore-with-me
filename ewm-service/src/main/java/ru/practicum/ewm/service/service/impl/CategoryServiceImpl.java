@@ -13,7 +13,6 @@ import ru.practicum.ewm.service.dto.category.CategoryUpdateRequestDto;
 import ru.practicum.ewm.service.exception.NotFoundException;
 import ru.practicum.ewm.service.mapper.api.CategoryMapper;
 import ru.practicum.ewm.service.model.Category;
-import ru.practicum.ewm.service.model.Event;
 import ru.practicum.ewm.service.repository.CategoryRepository;
 import ru.practicum.ewm.service.service.api.CategoryService;
 import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
@@ -72,7 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
         final Page<Category> categoryPage = categoryRepository.findAll(pageable);
 
         return categoryPage.stream()
-            .map(category ->categoryMapper.toCategoryDto(category))
+            .map(category -> categoryMapper.toCategoryDto(category))
             .collect(Collectors.toList());
     }
 }

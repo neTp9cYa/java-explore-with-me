@@ -1,7 +1,6 @@
 package ru.practicum.ewm.service.service.request;
 
 import java.util.List;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 

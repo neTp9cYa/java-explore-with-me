@@ -6,5 +6,6 @@ import ru.practicum.ewm.service.model.Compilation;
 
 public interface CompilationMapper {
     Compilation toCompilation(final CompilationCreateRequestDto compilationDto);
+
     CompilationDto toCompilationDto(final Compilation compilation);
 }
