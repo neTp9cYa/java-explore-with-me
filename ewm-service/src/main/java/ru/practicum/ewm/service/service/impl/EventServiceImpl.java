@@ -101,6 +101,10 @@ public class EventServiceImpl implements EventService {
                     throw new IllegalStateException();
                 }
                 updatingEvent.setPublishedOn(LocalDateTime.now());
+            } else if (newEventState == EventState.REJECTED) {
+                if (updatingEvent.getState() != EventState.PENDING) {
+                    throw new IllegalStateException();
+                }
             }
             updatingEvent.setState(newEventState);
         }
