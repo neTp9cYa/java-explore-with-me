@@ -42,7 +42,7 @@ public class EventCreateRequestDto {
     private Integer participantLimit = 0;
 
 
-    private Boolean requestModeration = false;
+    private Boolean requestModeration = true;
 
     @NotBlank
     @Size(min = 3, max = 120)
