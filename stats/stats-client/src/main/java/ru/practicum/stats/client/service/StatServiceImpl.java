@@ -1,12 +1,12 @@
-package ru.practicum.ewm.service.service.impl;
+package ru.practicum.stats.client.service;
 
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.service.service.api.StatService;
-import ru.practicum.stats.client.StatsClient;
+import ru.practicum.stats.client.service.StatService;
+import ru.practicum.stats.client.client.StatsClient;
 import ru.practicum.stats.dto.HitCreateDto;
 
 @Service

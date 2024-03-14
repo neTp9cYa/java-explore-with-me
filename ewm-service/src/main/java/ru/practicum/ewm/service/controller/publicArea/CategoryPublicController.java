@@ -1,6 +1,7 @@
 package ru.practicum.ewm.service.controller.publicArea;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.category.CategoryDto;
 import ru.practicum.ewm.service.service.api.CategoryService;
+import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
+import ru.practicum.stats.client.service.StatService;
 import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
@@ -22,17 +25,22 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 public class CategoryPublicController {
 
     private final CategoryService categoryService;
+    private final StatService statService;
 
     @GetMapping("/{categoryId}")
     @LogInputOutputAnnotaion
-    public CategoryDto getCategory(@PathVariable final long categoryId) {
+    @CollectRequestStatisticAnnotaion
+    public CategoryDto getCategory(@PathVariable final long categoryId,
+                                   final HttpServletRequest request) {
         return categoryService.getCategory(categoryId);
     }
 
     @GetMapping
     @LogInputOutputAnnotaion
+    @CollectRequestStatisticAnnotaion
     public List<CategoryDto> getCategories(@RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                           @RequestParam(defaultValue = "10") @Positive final int size) {
+                                           @RequestParam(defaultValue = "10") @Positive final int size,
+                                           final HttpServletRequest request) {
         final GetCategoriesRequest getCategoriesRequest = GetCategoriesRequest.builder()
             .from(from)
             .size(size)

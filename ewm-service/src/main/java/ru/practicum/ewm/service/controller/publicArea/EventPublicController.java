@@ -3,7 +3,6 @@ package ru.practicum.ewm.service.controller.publicArea;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,8 @@ import ru.practicum.ewm.service.dto.event.EventShortDto;
 import ru.practicum.ewm.service.dto.event.EventSort;
 import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.service.api.EventService;
-import ru.practicum.ewm.service.service.api.StatService;
+import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
+import ru.practicum.stats.client.service.StatService;
 import ru.practicum.ewm.service.service.request.GetEventsPublicRequest;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
@@ -34,12 +34,15 @@ public class EventPublicController {
 
     @GetMapping("/{eventId}")
     @LogInputOutputAnnotaion
-    public EventFullDto getEvent(@PathVariable final long eventId) {
+    @CollectRequestStatisticAnnotaion
+    public EventFullDto getEvent(@PathVariable final long eventId,
+                                 final HttpServletRequest request) {
         return eventService.getPublicEvent(eventId);
     }
 
     @GetMapping
     @LogInputOutputAnnotaion
+    @CollectRequestStatisticAnnotaion
     public List<EventShortDto> getEvents(
         @RequestParam(required = false) final String text,
         @RequestParam(required = false) final List<Long> categories,
@@ -49,11 +52,10 @@ public class EventPublicController {
         @RequestParam(defaultValue = "false") final boolean onlyAvailable,
         @RequestParam(defaultValue = "EVENT_DATE") final EventSort sort,
         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-        @RequestParam(defaultValue = "10") @Positive final int size,
-        final HttpServletRequest request) {
+        @RequestParam(defaultValue = "10") @Positive final int size) {
 
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
-            throw new ValidationException("rangeStart should be less or equal rangeEnd");
+            throw new IllegalArgumentException("rangeStart should be less or equal rangeEnd");
         }
 
         final GetEventsPublicRequest getEventsPublicRequest = GetEventsPublicRequest.builder()
@@ -69,10 +71,6 @@ public class EventPublicController {
             .size(size)
             .build();
 
-        final List<EventShortDto> events = eventService.getEvents(getEventsPublicRequest);
-
-        statService.addHit(request);
-
-        return events;
+        return eventService.getEvents(getEventsPublicRequest);
     }
 }

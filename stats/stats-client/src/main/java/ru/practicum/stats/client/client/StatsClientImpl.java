@@ -1,4 +1,4 @@
-package ru.practicum.stats.client;
+package ru.practicum.stats.client.client;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -15,6 +15,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.stats.client.client.BaseClient;
+import ru.practicum.stats.client.client.StatsClient;
 import ru.practicum.stats.client.request.GetStatsRequest;
 import ru.practicum.stats.dto.HitCreateDto;
 import ru.practicum.stats.dto.StatItemDto;

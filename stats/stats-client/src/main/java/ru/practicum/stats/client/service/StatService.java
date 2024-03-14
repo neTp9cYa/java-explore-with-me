@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.service.api;
+package ru.practicum.stats.client.service;
 
 import javax.servlet.http.HttpServletRequest;
 
