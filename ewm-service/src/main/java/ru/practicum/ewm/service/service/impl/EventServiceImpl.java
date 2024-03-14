@@ -143,7 +143,7 @@ public class EventServiceImpl implements EventService {
 
         final Pageable pageable = FlexPageRequest.of(getEventsAdminRequest.getFrom(), getEventsAdminRequest.getSize());
 
-        final Page<Event> eventPage = eventRepository.findAll(pageable);
+        final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
         final List<EventFullDto> eventDtos = eventPage.stream()
             .map(event -> eventMapper.toEventFullDto(event))
