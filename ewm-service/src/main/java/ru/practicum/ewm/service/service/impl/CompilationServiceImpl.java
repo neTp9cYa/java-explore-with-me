@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import ru.practicum.ewm.service.mapper.api.CompilationMapper;
 import ru.practicum.ewm.service.model.Compilation;
 import ru.practicum.ewm.service.model.Event;
 import ru.practicum.ewm.service.repository.CompilationRepository;
+import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.specification.CompilationSpecification;
 import ru.practicum.ewm.service.repository.specification.EventSpecification;
 import ru.practicum.ewm.service.service.api.CompilationService;
@@ -28,11 +30,20 @@ public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final CompilationMapper compilationMapper;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
     public CompilationDto create(final CompilationCreateRequestDto compilationDto) {
         final Compilation creatingCompilation = compilationMapper.toCompilation(compilationDto);
+
+        compilationDto.getEvents().ifPresent(eventIds -> {
+            if (eventIds.isEmpty()) { return; }
+            final List<Event> events = eventRepository.findAllById(eventIds);
+            if (eventIds.size() != events.size()) { throw new IllegalArgumentException(); }
+            creatingCompilation.setEvents(new HashSet<>(events));
+        });
+
         final Compilation createdCompilation = compilationRepository.save(creatingCompilation);
         return compilationMapper.toCompilationDto(createdCompilation);
     }
