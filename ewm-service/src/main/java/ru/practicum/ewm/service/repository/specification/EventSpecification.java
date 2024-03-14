@@ -41,7 +41,7 @@ public class EventSpecification {
             return null;
         }
         return (root, query, criteriaBuilder) ->
-            criteriaBuilder.in(root.get("user").get("id")).value(userIds);
+            root.get("user").get("id").in(userIds);
     }
 
     public static Specification<Event> user(final Long userId) {
@@ -57,7 +57,7 @@ public class EventSpecification {
             return null;
         }
         return (root, query, criteriaBuilder) ->
-            criteriaBuilder.in(root.get("state")).value(states);
+            root.get("state").in(states);
     }
 
     public static Specification<Event> categories(final List<Long> categoryIds) {
@@ -65,7 +65,7 @@ public class EventSpecification {
             return null;
         }
         return (root, query, criteriaBuilder) ->
-            criteriaBuilder.in(root.get("category").get("id")).value(categoryIds);
+            root.get("category").get("id").in(categoryIds);
     }
 
     public static Specification<Event> rangeStart(final LocalDateTime start) {
