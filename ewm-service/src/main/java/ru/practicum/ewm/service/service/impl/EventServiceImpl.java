@@ -95,16 +95,11 @@ public class EventServiceImpl implements EventService {
         }
 
         if (eventDto.getStateAction() != null) {
-            switch (eventDto.getStateAction()) {
-                case PUBLISH_EVENT:
-                    updatingEvent.setState(EventState.PUBLISHED);
-                    break;
-                case REJECT_EVENT:
-                    updatingEvent.setState(EventState.REJECTED);
-                    break;
-                default:
-                    throw new IllegalArgumentException("State action is not supported");
+            final EventState newEventState = eventDto.getStateAction().toEventState();
+            if (newEventState == EventState.PUBLISHED) {
+                updatingEvent.setPublishedOn(LocalDateTime.now());
             }
+            updatingEvent.setState(newEventState);
         }
 
         if (eventDto.getTitle() != null) {
@@ -281,16 +276,8 @@ public class EventServiceImpl implements EventService {
         }
 
         if (eventDto.getStateAction() != null) {
-            switch (eventDto.getStateAction()) {
-                case SEND_TO_REVIEW:
-                    updatingEvent.setState(EventState.PENDING);
-                    break;
-                case CANCEL_REVIEW:
-                    updatingEvent.setState(EventState.CANCELED);
-                    break;
-                default:
-                    throw new IllegalArgumentException("State action is not supported");
-            }
+            final EventState newEventState = eventDto.getStateAction().toEventState();
+            updatingEvent.setState(newEventState);
         }
 
         if (eventDto.getTitle() != null) {

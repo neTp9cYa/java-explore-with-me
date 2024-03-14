@@ -32,7 +32,6 @@ public class EventMapperImpl implements EventMapper {
         return EventFullDto.builder()
             .annotation(event.getAnnotation())
             .category(categoryMapper.toCategoryDto(event.getCategory()))
-            //.confirmedRequests()
             .createdOn(event.getCreatedOn())
             .description(event.getDescription())
             .eventDate(event.getEventDate())
@@ -45,6 +44,7 @@ public class EventMapperImpl implements EventMapper {
             .requestModeration(event.isRequestModeration())
             .state(event.getState())
             .title(event.getTitle())
+            //.confirmedRequests()
             //.views()
             .build();
     }
@@ -55,12 +55,12 @@ public class EventMapperImpl implements EventMapper {
         return EventShortDto.builder()
             .annotation(event.getAnnotation())
             .category(categoryMapper.toCategoryDto(event.getCategory()))
-            //.confirmedRequests()
             .eventDate(event.getEventDate())
             .id(event.getId())
             .initiator(userMapper.toUserShortDto(event.getUser()))
             .paid(event.isPaid())
             .title(event.getTitle())
+            //.confirmedRequests()
             //.views()
             .build();
     }
