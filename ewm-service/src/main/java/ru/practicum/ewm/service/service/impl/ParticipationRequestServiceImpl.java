@@ -39,6 +39,10 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         final Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
+        if (event.getUser().getId() == userId) {
+            throw new IllegalStateException();
+        }
+
         final long cofirmedRequestCount = participationRequestRepository
             .getCountForEventByStatus(
                 eventId,
