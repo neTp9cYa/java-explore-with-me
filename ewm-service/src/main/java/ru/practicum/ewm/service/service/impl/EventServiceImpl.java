@@ -376,7 +376,11 @@ public class EventServiceImpl implements EventService {
         final List<ParticipationRequest> confirmedParticipationRequests = participationRequestRepository
             .saveAll(confirmingParticipationRequests);
 
-        return eventMapper.toDto(confirmedParticipationRequests, rejectingParticipationRequests);
+        rejectingParticipationRequests.forEach(request -> request.setStatus(ParticipationRequestStatus.REJECTED));
+        final List<ParticipationRequest> rejectedParticipationRequests = participationRequestRepository
+            .saveAll(rejectingParticipationRequests);
+
+        return eventMapper.toDto(confirmedParticipationRequests, rejectedParticipationRequests);
     }
 
     @Override
