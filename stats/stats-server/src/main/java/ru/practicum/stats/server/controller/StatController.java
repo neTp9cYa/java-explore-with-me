@@ -41,6 +41,10 @@ public class StatController {
         @RequestParam final Optional<List<String>> uris,
         @RequestParam(defaultValue = "false") final Boolean unique) {
 
+        if (start != null && end != null && start.isAfter(end)) {
+            throw new IllegalArgumentException("rangeStart should be less or equal rangeEnd");
+        }
+
         return statService.getStats(start, end, uris, unique);
     }
 }

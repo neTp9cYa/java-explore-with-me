@@ -260,7 +260,7 @@ public class EventServiceImpl implements EventService {
         final Event updatingEvent = eventRepository.findByIdAndUser_Id(eventId, userId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
-        if (updatingEvent.getState() != EventState.PENDING) {
+        if (updatingEvent.getState() != EventState.PENDING && updatingEvent.getState() != EventState.REJECTED) {
             throw new IllegalStateException();
         }
 
@@ -433,7 +433,7 @@ public class EventServiceImpl implements EventService {
                 statItem -> statItem.getHits()
             ));
 
-        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
+        eventDtos.stream().forEach(eventDto -> eventDto.setViews(
             viewCountForEvents.getOrDefault(String.format(eventUrlFormat, eventDto.getId()), 0L)));
     }
 
