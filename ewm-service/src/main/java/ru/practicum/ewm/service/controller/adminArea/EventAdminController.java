@@ -40,15 +40,14 @@ public class EventAdminController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<EventFullDto> getEvents(@RequestParam final List<Long> users,
-                                        @RequestParam final List<EventState> states,
-                                        @RequestParam final List<Long> categories,
-                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                        final LocalDateTime rangeStart,
-                                        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                        final LocalDateTime rangeEnd,
-                                        @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                        @RequestParam(defaultValue = "10") @Positive final int size) {
+    public List<EventFullDto> getEvents(
+        @RequestParam(required = false) final List<Long> users,
+        @RequestParam(required = false) final List<EventState> states,
+        @RequestParam(required = false) final List<Long> categories,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeStart,
+        @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") final LocalDateTime rangeEnd,
+        @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
+        @RequestParam(defaultValue = "10") @Positive final int size) {
 
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
             throw new ValidationException("rangeStart should be less or equal rangeEnd");
