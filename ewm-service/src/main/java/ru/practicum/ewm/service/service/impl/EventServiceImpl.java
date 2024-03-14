@@ -319,7 +319,7 @@ public class EventServiceImpl implements EventService {
         for (final ParticipationRequest participationRequest : participationRequests) {
             if (participationRequest.getEvent().getId() != eventId ||
                 participationRequest.getStatus() != ParticipationRequestStatus.PENDING) {
-                throw new IllegalArgumentException();
+                throw new IllegalStateException();
             }
         }
 
