@@ -84,7 +84,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional(readOnly = true)
     public List<CompilationDto> getCompilations(GetCompilationsRequest getCompilationsRequest) {
-        Specification<Compilation> specification = Specification
+        final Specification<Compilation> specification = Specification
             .where(CompilationSpecification.pinned(getCompilationsRequest.getPinned()));
 
         final Pageable pageable = FlexPageRequest.of(

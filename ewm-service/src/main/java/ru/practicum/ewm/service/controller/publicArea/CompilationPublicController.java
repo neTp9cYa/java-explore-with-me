@@ -37,7 +37,7 @@ public class CompilationPublicController {
     @GetMapping
     @LogInputOutputAnnotaion
     @CollectRequestStatisticAnnotaion
-    public List<CompilationDto> search(@RequestParam final Boolean pinned,
+    public List<CompilationDto> search(@RequestParam(required = false) final Boolean pinned,
                                        @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
                                        @RequestParam(defaultValue = "10") @Positive final int size) {
         final GetCompilationsRequest getCompilationsRequest = GetCompilationsRequest.builder()
