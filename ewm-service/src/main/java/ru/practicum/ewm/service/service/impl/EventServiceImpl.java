@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.dto.event.EventParticipationRequestUpdateRequestDto;
 import ru.practicum.ewm.service.dto.event.EventParticipationRequestUpdateResponseDto;
 import ru.practicum.ewm.service.dto.event.EventShortDto;
+import ru.practicum.ewm.service.dto.event.EventSort;
 import ru.practicum.ewm.service.dto.event.EventUpdateAdminRequestDto;
 import ru.practicum.ewm.service.dto.event.EventUpdateRequestDto;
 import ru.practicum.ewm.service.dto.participant.ParticipationRequestDto;
@@ -164,13 +166,11 @@ public class EventServiceImpl implements EventService {
             .and(EventSpecification.paid(getEventsPublicRequest.getPaid()))
             .and(EventSpecification.rangeStart(getEventsPublicRequest.getRangeStart()))
             .and(EventSpecification.rangeEnd(getEventsPublicRequest.getRangeEnd()));
-        //.and(EventSpecification.onlyAvailable(getEventsPublicRequest.isOnlyAvailable()))
 
         final Pageable pageable = FlexPageRequest.of(
             getEventsPublicRequest.getFrom(),
-            getEventsPublicRequest.getSize());
-
-        // sort
+            getEventsPublicRequest.getSize(),
+            Sort.by(getEventsPublicRequest.getSort().toSortProperty()));
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
@@ -181,8 +181,26 @@ public class EventServiceImpl implements EventService {
         enrichWithConfirmedReqeusts(eventDtos);
         enrichWithViews(eventDtos);
 
-        return eventDtos;
+        if (getEventsPublicRequest.getSort() == EventSort.VIEWS) {
+            eventDtos.sort((e1, e2) -> (int) (e1.getViews() - e2.getViews()));
+        }
 
+        if (!getEventsPublicRequest.isOnlyAvailable()) {
+            return eventDtos;
+        }
+
+        final Map<Long, Event> eventByIds = eventPage.stream().collect(Collectors.toMap(
+            event -> event.getId(),
+            event -> event
+        ));
+
+        return eventDtos.stream()
+            .filter(eventDto -> {
+                final Event event = eventByIds.get(eventDto.getId());
+                return event.getParticipantLimit() == 0 ||
+                    event.getParticipantLimit() > eventDto.getConfirmedRequests();
+            })
+            .collect(Collectors.toList());
     }
 
     @Override
