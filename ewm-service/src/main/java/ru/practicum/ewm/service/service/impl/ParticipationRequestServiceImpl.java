@@ -43,6 +43,10 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new IllegalStateException();
         }
 
+        if (event.getState() != EventState.PUBLISHED) {
+            throw new IllegalStateException();
+        }
+
         final long cofirmedRequestCount = participationRequestRepository
             .getCountForEventByStatus(
                 eventId,
