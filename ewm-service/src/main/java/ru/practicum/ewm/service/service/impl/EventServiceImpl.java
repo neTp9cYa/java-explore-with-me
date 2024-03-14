@@ -422,7 +422,9 @@ public class EventServiceImpl implements EventService {
             .map(eventDto -> String.format(eventUrlFormat, eventDto.getId()))
             .collect(Collectors.toList());
 
-        final GetStatsRequest getStatsRequest = new GetStatsRequest(LocalDateTime.MIN, LocalDateTime.MAX);
+        final GetStatsRequest getStatsRequest = new GetStatsRequest(
+            LocalDateTime.of(1, 1, 1, 0, 0, 0),
+            LocalDateTime.of(9999, 1, 1, 0, 0, 0));
         getStatsRequest.setUris(eventUrls);
         getStatsRequest.setUnique(true);
 
