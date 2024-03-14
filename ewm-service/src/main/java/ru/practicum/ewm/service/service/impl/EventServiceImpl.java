@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,9 @@ import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.request.GetEventsAdminRequest;
 import ru.practicum.ewm.service.service.request.GetEventsPrivateRequest;
 import ru.practicum.ewm.service.service.request.GetEventsPublicRequest;
-import ru.practicum.stats.client.StatsClient;
+import ru.practicum.stats.client.client.StatsClient;
+import ru.practicum.stats.client.request.GetStatsRequest;
+import ru.practicum.stats.dto.StatItemDto;
 import ru.practicum.utils.pagination.FlexPageRequest;
 
 @Service
@@ -136,29 +139,9 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
 
         enrichWithConfirmedReqeusts(eventDtos);
+        enrichWithViews(eventDtos);
 
         return eventDtos;
-    }
-
-    private void enrichWithConfirmedReqeusts(final List<? extends EventBaseDto> eventDtos) {
-        final List<Long> eventIds = eventDtos.stream()
-            .map(EventBaseDto::getId)
-            .collect(Collectors.toList());
-        final Map<Long, Long> confirmedRequestCountForEvents = participationRequestRepository
-            .getCountForEventsByStatus(eventIds, ParticipationRequestStatus.CONFIRMED)
-            .collect(Collectors.toMap(
-                countForEvent -> countForEvent.getEventId(),
-                countForEvent -> countForEvent.getCount()));
-        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
-            confirmedRequestCountForEvents.getOrDefault(eventDto.getId(), 0L)));
-    }
-
-    private void enrichWithConfirmedReqeusts(final EventBaseDto eventDto) {
-        participationRequestRepository
-            .getCountForEventsByStatus(List.of(eventDto.getId()), ParticipationRequestStatus.CONFIRMED)
-            .findFirst()
-            .ifPresent(participationRequestCount -> eventDto
-                .setConfirmedRequests(participationRequestCount.getCount()));
     }
 
     @Override
@@ -185,6 +168,7 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
 
         enrichWithConfirmedReqeusts(eventDtos);
+        enrichWithViews(eventDtos);
 
         return eventDtos;
 
@@ -207,6 +191,7 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
 
         enrichWithConfirmedReqeusts(eventDtos);
+        enrichWithViews(eventDtos);
 
         return eventDtos;
     }
@@ -220,6 +205,7 @@ public class EventServiceImpl implements EventService {
         final EventFullDto eventDto = eventMapper.toEventFullDto(event);
 
         enrichWithConfirmedReqeusts(eventDto);
+        enrichWithViews(eventDto);
 
         return eventDto;
     }
@@ -233,6 +219,7 @@ public class EventServiceImpl implements EventService {
         final EventFullDto eventDto = eventMapper.toEventFullDto(event);
 
         enrichWithConfirmedReqeusts(eventDto);
+        enrichWithViews(eventDto);
 
         return eventDto;
     }
@@ -372,5 +359,63 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
     }
 
+    private void enrichWithConfirmedReqeusts(final List<? extends EventBaseDto> eventDtos) {
+        final List<Long> eventIds = eventDtos.stream()
+            .map(EventBaseDto::getId)
+            .collect(Collectors.toList());
+        final Map<Long, Long> confirmedRequestCountForEvents = participationRequestRepository
+            .getCountForEventsByStatus(eventIds, ParticipationRequestStatus.CONFIRMED)
+            .collect(Collectors.toMap(
+                countForEvent -> countForEvent.getEventId(),
+                countForEvent -> countForEvent.getCount()));
+        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
+            confirmedRequestCountForEvents.getOrDefault(eventDto.getId(), 0L)));
+    }
 
+    private void enrichWithConfirmedReqeusts(final EventBaseDto eventDto) {
+        participationRequestRepository
+            .getCountForEventsByStatus(List.of(eventDto.getId()), ParticipationRequestStatus.CONFIRMED)
+            .findFirst()
+            .ifPresent(participationRequestCount -> eventDto
+                .setConfirmedRequests(participationRequestCount.getCount()));
+    }
+
+    private void enrichWithViews(final List<? extends EventBaseDto> eventDtos) {
+        final String eventUrlFormat = "/events/%s";
+
+        final List<String> eventUrls = eventDtos.stream()
+            .map(eventDto -> String.format(eventUrlFormat, eventDto.getId()))
+            .collect(Collectors.toList());
+
+        final GetStatsRequest getStatsRequest = new GetStatsRequest(LocalDateTime.MIN, LocalDateTime.MAX);
+        getStatsRequest.setUris(eventUrls);
+        getStatsRequest.setUnique(true);
+
+        final Map<String, Long> viewCountForEvents = statsClient.getStats(getStatsRequest)
+            .stream()
+            .collect(Collectors.toMap(
+                statItem -> statItem.getUri(),
+                statItem -> statItem.getHits()
+            ));
+
+        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
+            viewCountForEvents.getOrDefault(String.format(eventUrlFormat, eventDto.getId()), 0L)));
+    }
+
+    private void enrichWithViews(final EventBaseDto eventDto) {
+        final String eventUrlFormat = "/events/%s";
+
+        final String eventUrl = String.format(eventUrlFormat, eventDto.getId());
+
+        final GetStatsRequest getStatsRequest = new GetStatsRequest(
+            LocalDateTime.of(1, 1, 1, 0, 0, 0),
+            LocalDateTime.of(9999, 1, 1, 0, 0, 0));
+        getStatsRequest.setUris(List.of(eventUrl));
+        getStatsRequest.setUnique(true);
+
+        final List<StatItemDto> viewCountForEvent = statsClient.getStats(getStatsRequest);
+        if (viewCountForEvent != null && viewCountForEvent.size() == 1) {
+            eventDto.setViews(viewCountForEvent.get(0).getHits());
+        }
+    }
 }
