@@ -97,6 +97,9 @@ public class EventServiceImpl implements EventService {
         if (eventDto.getStateAction() != null) {
             final EventState newEventState = eventDto.getStateAction().toEventState();
             if (newEventState == EventState.PUBLISHED) {
+                if (updatingEvent.getState() == EventState.PUBLISHED) {
+                    throw new IllegalStateException();
+                }
                 updatingEvent.setPublishedOn(LocalDateTime.now());
             }
             updatingEvent.setState(newEventState);
