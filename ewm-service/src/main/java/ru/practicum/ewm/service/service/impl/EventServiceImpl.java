@@ -136,7 +136,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventFullDto> getEvents(final GetEventsAdminRequest getEventsAdminRequest) {
-        Specification<Event> specification = Specification
+        final Specification<Event> specification = Specification
             .where(EventSpecification.users(getEventsAdminRequest.getUsers()))
             .and(EventSpecification.states(getEventsAdminRequest.getStates()))
             .and(EventSpecification.categories(getEventsAdminRequest.getCategories()))
@@ -160,7 +160,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getEvents(final GetEventsPublicRequest getEventsPublicRequest) {
-        Specification<Event> specification = Specification
+        final Specification<Event> specification = Specification
             .where(EventSpecification.text(getEventsPublicRequest.getText()))
             .and(EventSpecification.categories(getEventsPublicRequest.getCategories()))
             .and(EventSpecification.paid(getEventsPublicRequest.getPaid()))
@@ -206,7 +206,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getEvents(final long userId, final GetEventsPrivateRequest getEventsPrivateRequest) {
-        Specification<Event> specification = Specification
+        final Specification<Event> specification = Specification
             .where(EventSpecification.user(userId));
 
         final Pageable pageable = FlexPageRequest.of(
