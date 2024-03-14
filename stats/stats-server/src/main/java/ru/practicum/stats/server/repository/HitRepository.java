@@ -20,12 +20,12 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
 
     @Query("SELECT new ru.practicum.stats.dto.StatItemDto(h.app, h.uri, count(h.ip)) " +
         "FROM Hit h " +
-        "WHERE (h.timestamp BETWEEN :start AND :end) AND (h.uri IN :urisOptional) " +
+        "WHERE (h.timestamp BETWEEN :start AND :end) AND (h.uri IN :uris) " +
         "GROUP BY h.app, h.uri " +
         "ORDER BY count(h.ip) DESC")
     List<StatItemDto> getHitsStats(final LocalDateTime start,
                                    final LocalDateTime end,
-                                   final List<String> urisOptional);
+                                   final List<String> uris);
 
     @Query("SELECT new ru.practicum.stats.dto.StatItemDto(h.app, h.uri, count(distinct h.ip)) " +
         "FROM Hit h " +
@@ -37,10 +37,10 @@ public interface HitRepository extends JpaRepository<Hit, Integer> {
 
     @Query("SELECT new ru.practicum.stats.dto.StatItemDto(h.app, h.uri, count(distinct h.ip)) " +
         "FROM Hit h " +
-        "WHERE (h.timestamp BETWEEN :start AND :end) AND (:urisOptional IN :urisOptional) " +
+        "WHERE (h.timestamp BETWEEN :start AND :end) AND (h.uri IN :uris) " +
         "GROUP BY h.app, h.uri " +
         "ORDER BY count(distinct h.ip) DESC")
     List<StatItemDto> getUniqueHitsStats(final LocalDateTime start,
                                          final LocalDateTime end,
-                                         final List<String> urisOptional);
+                                         final List<String> uris);
 }
