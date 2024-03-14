@@ -2,14 +2,13 @@ package ru.practicum.ewm.service.dto.compilation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
 public class CompilationCreateRequestDto {
-    private List<Long> events;
+    private List<Long> events = new ArrayList<>();
     private boolean pinned = false;
 
     @NotBlank

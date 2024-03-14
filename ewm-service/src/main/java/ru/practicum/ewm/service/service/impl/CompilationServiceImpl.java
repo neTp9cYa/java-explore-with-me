@@ -55,7 +55,13 @@ public class CompilationServiceImpl implements CompilationService {
                 new NotFoundException(String.format("Compilation with id %d not found", compilationId)));
 
         if (compilationDto.getEvents() != null) {
-            //updatingCompilation.setEvents(compilationDto.getEvents());
+            if (compilationDto.getEvents().size() == 0) {
+                updatingCompilation.setEvents(new HashSet<>());
+            } else {
+                final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
+                if (compilationDto.getEvents().size() != events.size()) { throw new IllegalArgumentException(); }
+                updatingCompilation.setEvents(new HashSet<>(events));
+            }
         }
 
         if (compilationDto.getTitle() != null) {
