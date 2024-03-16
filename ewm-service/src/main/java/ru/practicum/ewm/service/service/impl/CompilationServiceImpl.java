@@ -56,11 +56,11 @@ public class CompilationServiceImpl implements CompilationService {
                 new NotFoundException(String.format("Compilation with id %d not found", compilationId)));
 
         if (compilationDto.getEvents() != null) {
-            if (compilationDto.getEvents().size() == 0) {
+            if (compilationDto.getEvents().isEmpty() || compilationDto.getEvents().get().size() == 0) {
                 updatingCompilation.setEvents(new HashSet<>());
             } else {
-                final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
-                if (compilationDto.getEvents().size() != events.size()) {
+                final List<Event> events = eventRepository.findAllById(compilationDto.getEvents().get());
+                if (compilationDto.getEvents().get().size() != events.size()) {
                     throw new IllegalArgumentException();
                 }
                 updatingCompilation.setEvents(new HashSet<>(events));

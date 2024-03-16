@@ -2,9 +2,12 @@ package ru.practicum.ewm.service.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +52,8 @@ import ru.practicum.utils.pagination.FlexPageRequest;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
+    final static String EVENT_URL_FORMAT = "/events/%s";
+
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
     private final ParticipationRequestRepository participationRequestRepository;
@@ -58,6 +63,88 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final StatsClient statsClient;
+
+    @Override
+    @Transactional
+    public EventFullDto createByUser(long userId, final EventCreateRequestDto eventCreateRequestDto) {
+        final User user = userRepository.findById(userId)
+            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
+
+        final Category category = categoryRepository.findById(eventCreateRequestDto.getCategory())
+            .orElseThrow(() -> new NotFoundException(
+                String.format("Category with id %d not found", eventCreateRequestDto.getCategory())));
+
+        final Event creatingEvent = eventMapper.toEvent(eventCreateRequestDto, user, category);
+        final Event createdEvent = eventRepository.save(creatingEvent);
+
+        return eventMapper.toEventFullDto(createdEvent);
+    }
+
+    @Override
+    @Transactional
+    public EventFullDto updateByUser(final long userId,
+                                     final long eventId,
+                                     final EventUpdateRequestDto eventDto) {
+        final Event updatingEvent = eventRepository.findByIdAndUser_Id(eventId, userId)
+            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
+
+        if (updatingEvent.getState() != EventState.PENDING && updatingEvent.getState() != EventState.REJECTED) {
+            throw new IllegalStateException();
+        }
+
+        if (eventDto.getAnnotation() != null) {
+            updatingEvent.setAnnotation(eventDto.getAnnotation());
+        }
+
+        if (eventDto.getCategory() != null) {
+            final Category category = categoryRepository.findById(eventDto.getCategory())
+                .orElseThrow(() -> new NotFoundException(
+                    String.format("Category with id %d not found", eventDto.getCategory())));
+            updatingEvent.setCategory(category);
+        }
+
+        if (eventDto.getDescription() != null) {
+            updatingEvent.setDescription(eventDto.getDescription());
+        }
+
+        if (eventDto.getEventDate() != null) {
+            updatingEvent.setEventDate(eventDto.getEventDate());
+        }
+
+        if (eventDto.getLocation() != null) {
+            if (eventDto.getLocation().getLat() != null) {
+                updatingEvent.setLatitude(eventDto.getLocation().getLat());
+            }
+            if (eventDto.getLocation().getLon() != null) {
+                updatingEvent.setLongitude(eventDto.getLocation().getLon());
+            }
+        }
+
+        if (eventDto.getPaid() != null) {
+            updatingEvent.setPaid(eventDto.getPaid());
+        }
+
+        if (eventDto.getParticipantLimit() != null) {
+            updatingEvent.setParticipantLimit(eventDto.getParticipantLimit());
+        }
+
+        if (eventDto.getRequestModeration() != null) {
+            updatingEvent.setRequestModeration(eventDto.getRequestModeration());
+        }
+
+        if (eventDto.getStateAction() != null) {
+            final EventState newEventState = eventDto.getStateAction().toEventState();
+            updatingEvent.setState(newEventState);
+        }
+
+        if (eventDto.getTitle() != null) {
+            updatingEvent.setTitle(eventDto.getTitle());
+        }
+
+        final Event updatedEvent = eventRepository.save(updatingEvent);
+
+        return toDto(updatedEvent);
+    }
 
     @Override
     @Transactional
@@ -126,11 +213,25 @@ public class EventServiceImpl implements EventService {
 
         final Event updatedEvent = eventRepository.save(updatingEvent);
 
-        final EventFullDto updatedEventDto = eventMapper.toEventFullDto(updatedEvent);
+        return toDto(updatedEvent);
+    }
 
-        enrichWithConfirmedReqeusts(updatedEventDto);
+    @Override
+    @Transactional(readOnly = true)
+    public EventFullDto getPublicEvent(final long eventId) {
+        final Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
+            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
-        return updatedEventDto;
+        return toDto(event);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public EventFullDto getOwnEvent(final long userId, final long eventId) {
+        final Event event = eventRepository.findByIdAndUser_Id(eventId, userId)
+            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
+
+        return toDto(event);
     }
 
     @Override
@@ -147,14 +248,7 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        final List<EventFullDto> eventDtos = eventPage.stream()
-            .map(event -> eventMapper.toEventFullDto(event))
-            .collect(Collectors.toList());
-
-        enrichWithConfirmedReqeusts(eventDtos);
-        enrichWithViews(eventDtos);
-
-        return eventDtos;
+        return toDtos(eventPage.stream(), (event) -> eventMapper.toEventFullDto((event)));
     }
 
     @Override
@@ -165,7 +259,8 @@ public class EventServiceImpl implements EventService {
             .and(EventSpecification.categories(getEventsPublicRequest.getCategories()))
             .and(EventSpecification.paid(getEventsPublicRequest.getPaid()))
             .and(EventSpecification.rangeStart(getEventsPublicRequest.getRangeStart()))
-            .and(EventSpecification.rangeEnd(getEventsPublicRequest.getRangeEnd()));
+            .and(EventSpecification.rangeEnd(getEventsPublicRequest.getRangeEnd()))
+            .and(EventSpecification.onlyAvaliable(getEventsPublicRequest.isOnlyAvailable()));
 
         final Pageable pageable = FlexPageRequest.of(
             getEventsPublicRequest.getFrom(),
@@ -174,33 +269,15 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        final List<EventShortDto> eventDtos = eventPage.stream()
-            .map(event -> eventMapper.toEventShortDto(event))
-            .collect(Collectors.toList());
-
-        enrichWithConfirmedReqeusts(eventDtos);
-        enrichWithViews(eventDtos);
+        final List<EventShortDto> eventDtos = toDtos(
+            eventPage.stream(),
+            (event) -> eventMapper.toEventShortDto((event)));
 
         if (getEventsPublicRequest.getSort() == EventSort.VIEWS) {
             eventDtos.sort((e1, e2) -> (int) (e1.getViews() - e2.getViews()));
         }
 
-        if (!getEventsPublicRequest.isOnlyAvailable()) {
-            return eventDtos;
-        }
-
-        final Map<Long, Event> eventByIds = eventPage.stream().collect(Collectors.toMap(
-            event -> event.getId(),
-            event -> event
-        ));
-
-        return eventDtos.stream()
-            .filter(eventDto -> {
-                final Event event = eventByIds.get(eventDto.getId());
-                return event.getParticipantLimit() == 0 ||
-                    event.getParticipantLimit() > eventDto.getConfirmedRequests();
-            })
-            .collect(Collectors.toList());
+        return eventDtos;
     }
 
     @Override
@@ -215,125 +292,7 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        final List<EventShortDto> eventDtos = eventPage.stream()
-            .map(event -> eventMapper.toEventShortDto(event))
-            .collect(Collectors.toList());
-
-        enrichWithConfirmedReqeusts(eventDtos);
-        enrichWithViews(eventDtos);
-
-        return eventDtos;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public EventFullDto getPublicEvent(final long eventId) {
-        final Event event = eventRepository.findByIdAndState(eventId, EventState.PUBLISHED)
-            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
-
-        final EventFullDto eventDto = eventMapper.toEventFullDto(event);
-
-        enrichWithConfirmedReqeusts(eventDto);
-        enrichWithViews(eventDto);
-
-        return eventDto;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public EventFullDto getPublicEvent(final long userId, final long eventId) {
-        final Event event = eventRepository.findByIdAndUser_Id(eventId, userId)
-            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
-
-        final EventFullDto eventDto = eventMapper.toEventFullDto(event);
-
-        enrichWithConfirmedReqeusts(eventDto);
-        enrichWithViews(eventDto);
-
-        return eventDto;
-    }
-
-    @Override
-    @Transactional
-    public EventFullDto create(long userId, final EventCreateRequestDto eventCreateRequestDto) {
-
-        final User user = userRepository.findById(userId)
-            .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
-
-        final Category category = categoryRepository.findById(eventCreateRequestDto.getCategory())
-            .orElseThrow(() -> new NotFoundException(
-                String.format("Category with id %d not found", eventCreateRequestDto.getCategory())));
-
-        final Event creatingEvent = eventMapper.toEvent(eventCreateRequestDto, user, category);
-        final Event createdEvent = eventRepository.save(creatingEvent);
-
-        return eventMapper.toEventFullDto(createdEvent);
-    }
-
-    @Override
-    @Transactional
-    public EventFullDto update(final long userId,
-                               final long eventId,
-                               final EventUpdateRequestDto eventDto) {
-        final Event updatingEvent = eventRepository.findByIdAndUser_Id(eventId, userId)
-            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
-
-        if (updatingEvent.getState() != EventState.PENDING && updatingEvent.getState() != EventState.REJECTED) {
-            throw new IllegalStateException();
-        }
-
-        if (eventDto.getAnnotation() != null) {
-            updatingEvent.setAnnotation(eventDto.getAnnotation());
-        }
-
-        if (eventDto.getCategory() != null) {
-            final Category category = categoryRepository.findById(eventDto.getCategory())
-                .orElseThrow(() -> new NotFoundException(
-                    String.format("Category with id %d not found", eventDto.getCategory())));
-            updatingEvent.setCategory(category);
-        }
-
-        if (eventDto.getDescription() != null) {
-            updatingEvent.setDescription(eventDto.getDescription());
-        }
-
-        if (eventDto.getEventDate() != null) {
-            updatingEvent.setEventDate(eventDto.getEventDate());
-        }
-
-        if (eventDto.getLocation() != null) {
-            if (eventDto.getLocation().getLat() != null) {
-                updatingEvent.setLatitude(eventDto.getLocation().getLat());
-            }
-            if (eventDto.getLocation().getLon() != null) {
-                updatingEvent.setLongitude(eventDto.getLocation().getLon());
-            }
-        }
-
-        if (eventDto.getPaid() != null) {
-            updatingEvent.setPaid(eventDto.getPaid());
-        }
-
-        if (eventDto.getParticipantLimit() != null) {
-            updatingEvent.setParticipantLimit(eventDto.getParticipantLimit());
-        }
-
-        if (eventDto.getRequestModeration() != null) {
-            updatingEvent.setRequestModeration(eventDto.getRequestModeration());
-        }
-
-        if (eventDto.getStateAction() != null) {
-            final EventState newEventState = eventDto.getStateAction().toEventState();
-            updatingEvent.setState(newEventState);
-        }
-
-        if (eventDto.getTitle() != null) {
-            updatingEvent.setTitle(eventDto.getTitle());
-        }
-
-        final Event updatedEvent = eventRepository.save(updatingEvent);
-
-        return eventMapper.toEventFullDto(updatedEvent);
+        return toDtos(eventPage.stream(), event -> eventMapper.toEventShortDto(event));
     }
 
     @Override
@@ -412,17 +371,52 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
     }
 
-    private void enrichWithConfirmedReqeusts(final List<? extends EventBaseDto> eventDtos) {
-        final List<Long> eventIds = eventDtos.stream()
-            .map(EventBaseDto::getId)
-            .collect(Collectors.toList());
-        final Map<Long, Long> confirmedRequestCountForEvents = participationRequestRepository
+    final private <TEventDto extends EventBaseDto> List<TEventDto> toDtos(
+        final Stream<Event> events,
+        final Function<Event, TEventDto> mapToDto) {
+
+        final List<TEventDto> eventDtos = new ArrayList<>();
+        final Map<Long, TEventDto> eventDtosById = new HashMap<>();
+        final Map<String, TEventDto> eventDtosByUrl = new HashMap<>();
+        final List<Long> eventIds = new ArrayList<>();
+        final List<String> eventUrls = new ArrayList<>();
+
+        events.forEach(event -> {
+            final TEventDto eventDto = mapToDto.apply(event);
+            final String eventUrl = String.format(EVENT_URL_FORMAT, eventDto.getId());
+            eventDtos.add(eventDto);
+            eventDtosById.put(eventDto.getId(), eventDto);
+            eventDtosByUrl.put(eventUrl, eventDto);
+            eventIds.add(eventDto.getId());
+            eventUrls.add(eventUrl);
+
+            enrichWithConfirmedReqeusts(eventDtosById, eventIds);
+            enrichWithViews(eventDtosByUrl, eventUrls);
+
+        });
+
+        return eventDtos;
+    }
+
+    final private EventFullDto toDto(final Event event) {
+        final EventFullDto eventDto = eventMapper.toEventFullDto(event);
+        final String eventUrl = String.format(EVENT_URL_FORMAT, eventDto.getId());
+
+        enrichWithConfirmedReqeusts(eventDto);
+        enrichWithViews(eventDto, eventUrl);
+
+        return eventDto;
+    }
+
+    private void enrichWithConfirmedReqeusts(final Map<Long, ? extends EventBaseDto> eventDtosById,
+                                             final List<Long> eventIds) {
+
+        participationRequestRepository
             .getCountForEventsByStatus(eventIds, ParticipationRequestStatus.CONFIRMED)
-            .collect(Collectors.toMap(
-                countForEvent -> countForEvent.getEventId(),
-                countForEvent -> countForEvent.getCount()));
-        eventDtos.stream().forEach(eventDto -> eventDto.setConfirmedRequests(
-            confirmedRequestCountForEvents.getOrDefault(eventDto.getId(), 0L)));
+            .forEach(participationRequestCount ->
+                eventDtosById
+                    .get(participationRequestCount.getEventId())
+                    .setConfirmedRequests(participationRequestCount.getCount()));
     }
 
     private void enrichWithConfirmedReqeusts(final EventBaseDto eventDto) {
@@ -433,35 +427,24 @@ public class EventServiceImpl implements EventService {
                 .setConfirmedRequests(participationRequestCount.getCount()));
     }
 
-    private void enrichWithViews(final List<? extends EventBaseDto> eventDtos) {
-        final String eventUrlFormat = "/events/%s";
-
-        final List<String> eventUrls = eventDtos.stream()
-            .map(eventDto -> String.format(eventUrlFormat, eventDto.getId()))
-            .collect(Collectors.toList());
-
+    private void enrichWithViews(final Map<String, ? extends EventBaseDto> eventDtosByUrls,
+                                 final List<String> eventUrls) {
         final GetStatsRequest getStatsRequest = new GetStatsRequest(
             LocalDateTime.of(1, 1, 1, 0, 0, 0),
             LocalDateTime.of(9999, 1, 1, 0, 0, 0));
         getStatsRequest.setUris(eventUrls);
         getStatsRequest.setUnique(true);
 
-        final Map<String, Long> viewCountForEvents = statsClient.getStats(getStatsRequest)
+        statsClient.getStats(getStatsRequest)
             .stream()
-            .collect(Collectors.toMap(
-                statItem -> statItem.getUri(),
-                statItem -> statItem.getHits()
-            ));
-
-        eventDtos.stream().forEach(eventDto -> eventDto.setViews(
-            viewCountForEvents.getOrDefault(String.format(eventUrlFormat, eventDto.getId()), 0L)));
+            .forEach(statItem -> {
+                eventDtosByUrls
+                    .get(statItem.getUri())
+                    .setViews(statItem.getHits());
+            });
     }
 
-    private void enrichWithViews(final EventBaseDto eventDto) {
-        final String eventUrlFormat = "/events/%s";
-
-        final String eventUrl = String.format(eventUrlFormat, eventDto.getId());
-
+    private void enrichWithViews(final EventBaseDto eventDto, final String eventUrl) {
         final GetStatsRequest getStatsRequest = new GetStatsRequest(
             LocalDateTime.of(1, 1, 1, 0, 0, 0),
             LocalDateTime.of(9999, 1, 1, 0, 0, 0));

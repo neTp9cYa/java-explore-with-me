@@ -40,7 +40,7 @@ public class EventPrivateController {
     @LogInputOutputAnnotaion
     public EventFullDto create(@PathVariable final long userId,
                                @RequestBody @Valid final EventCreateRequestDto eventCreateRequestDto) {
-        return eventService.create(userId, eventCreateRequestDto);
+        return eventService.createByUser(userId, eventCreateRequestDto);
     }
 
     @PatchMapping("/{eventId}")
@@ -48,14 +48,14 @@ public class EventPrivateController {
     public EventFullDto update(@PathVariable final long userId,
                                @PathVariable final long eventId,
                                @RequestBody @Valid final EventUpdateRequestDto eventUpdateRequestDto) {
-        return eventService.update(userId, eventId, eventUpdateRequestDto);
+        return eventService.updateByUser(userId, eventId, eventUpdateRequestDto);
     }
 
     @GetMapping("/{eventId}")
     @LogInputOutputAnnotaion
     public EventFullDto getEvent(@PathVariable final long userId,
                                  @PathVariable final long eventId) {
-        return eventService.getPublicEvent(userId, eventId);
+        return eventService.getOwnEvent(userId, eventId);
     }
 
     @GetMapping

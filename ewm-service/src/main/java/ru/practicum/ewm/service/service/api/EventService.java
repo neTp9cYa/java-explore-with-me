@@ -24,13 +24,13 @@ public interface EventService {
 
     EventFullDto getPublicEvent(final long eventId);
 
-    EventFullDto getPublicEvent(final long userId, final long eventId);
+    EventFullDto getOwnEvent(final long userId, final long eventId);
 
-    EventFullDto create(final long userId, final EventCreateRequestDto eventCreateRequestDto);
+    EventFullDto createByUser(final long userId, final EventCreateRequestDto eventCreateRequestDto);
 
-    EventFullDto update(final long userId,
-                        final long eventId,
-                        final EventUpdateRequestDto eventUpdateRequestDto);
+    EventFullDto updateByUser(final long userId,
+                              final long eventId,
+                              final EventUpdateRequestDto eventUpdateRequestDto);
 
     EventParticipationRequestUpdateResponseDto updateRequests(
         final long userId,

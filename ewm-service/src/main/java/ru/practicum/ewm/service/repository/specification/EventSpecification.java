@@ -2,10 +2,15 @@ package ru.practicum.ewm.service.repository.specification;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 import ru.practicum.ewm.service.model.Event;
 import ru.practicum.ewm.service.model.EventState;
+import ru.practicum.ewm.service.model.ParticipationRequest;
+import ru.practicum.ewm.service.model.ParticipationRequestStatus;
 
 public class EventSpecification {
 
@@ -81,6 +86,26 @@ public class EventSpecification {
         }
         return (root, query, criteriaBuilder) ->
             criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"), end);
+    }
+
+    public static Specification<Event> onlyAvaliable(final boolean onlyAvaliable) {
+        if (!onlyAvaliable) {
+            return null;
+        }
+
+        return (root, query, criteriaBuilder) -> {
+            final Subquery<Long> subquery = query.subquery(Long.class);
+            final Root<ParticipationRequest> subRoot = subquery.from(ParticipationRequest.class);
+            subquery.select(criteriaBuilder.count(subRoot.get("id")));
+            subquery.where(criteriaBuilder.and(
+                criteriaBuilder.equal(subRoot.get("status"), ParticipationRequestStatus.CONFIRMED),
+                criteriaBuilder.equal(root.get("id"), subRoot.get("event").get("id"))));
+            return criteriaBuilder.or(
+                criteriaBuilder.equal(root.get("participantLimit"), 0),
+                criteriaBuilder.isNull(subquery),
+                criteriaBuilder.greaterThan(root.get("participantLimit"), subquery)
+            );
+        };
     }
 
     private static String toLikeExpression(final String value) {
