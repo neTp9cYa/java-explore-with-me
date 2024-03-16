@@ -1,10 +1,3 @@
---DROP TABLE IF EXISTS compilation_events;
---DROP TABLE IF EXISTS compilations;
---DROP TABLE IF EXISTS participation_requests;
---DROP TABLE IF EXISTS events;
---DROP TABLE IF EXISTS categories;
---DROP TABLE IF EXISTS users;
-
 CREATE TABLE IF NOT EXISTS users (
      id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY,
      name VARCHAR(250) NOT NULL,
