@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.practicum.ewm.service.dto.user.UserCreateRequestDto;
 import ru.practicum.ewm.service.dto.user.UserFullDto;
 import ru.practicum.ewm.service.exception.NotFoundException;
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserFullDto> getUsers(final GetUsersRequest getUsersRequest) {
-        if (getUsersRequest.getIds() == null || getUsersRequest.getIds().isEmpty()) {
+        if (CollectionUtils.isEmpty(getUsersRequest.getIds())) {
             final Pageable pageable = FlexPageRequest.of(getUsersRequest.getFrom(), getUsersRequest.getSize());
             final Page<User> usersPage = userRepository.findAll(pageable);
             return userMapper.toUserDtos(usersPage.toList());
