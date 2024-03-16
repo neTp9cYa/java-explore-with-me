@@ -53,6 +53,8 @@ import ru.practicum.utils.pagination.FlexPageRequest;
 public class EventServiceImpl implements EventService {
 
     final static String EVENT_URL_FORMAT = "/events/%s";
+    final static LocalDateTime STAT_MIN_DATE_TIME = LocalDateTime.of(1, 1, 1, 0, 0, 0);
+    final static LocalDateTime STAT_MAX_DATE_TIME = LocalDateTime.of(9999, 1, 1, 0, 0, 0);
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
@@ -429,9 +431,7 @@ public class EventServiceImpl implements EventService {
 
     private void enrichWithViews(final Map<String, ? extends EventBaseDto> eventDtosByUrls,
                                  final List<String> eventUrls) {
-        final GetStatsRequest getStatsRequest = new GetStatsRequest(
-            LocalDateTime.of(1, 1, 1, 0, 0, 0),
-            LocalDateTime.of(9999, 1, 1, 0, 0, 0));
+        final GetStatsRequest getStatsRequest = new GetStatsRequest(STAT_MIN_DATE_TIME, STAT_MAX_DATE_TIME);
         getStatsRequest.setUris(eventUrls);
         getStatsRequest.setUnique(true);
 
@@ -445,9 +445,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private void enrichWithViews(final EventBaseDto eventDto, final String eventUrl) {
-        final GetStatsRequest getStatsRequest = new GetStatsRequest(
-            LocalDateTime.of(1, 1, 1, 0, 0, 0),
-            LocalDateTime.of(9999, 1, 1, 0, 0, 0));
+        final GetStatsRequest getStatsRequest = new GetStatsRequest(STAT_MIN_DATE_TIME, STAT_MAX_DATE_TIME);
         getStatsRequest.setUris(List.of(eventUrl));
         getStatsRequest.setUnique(true);
 
