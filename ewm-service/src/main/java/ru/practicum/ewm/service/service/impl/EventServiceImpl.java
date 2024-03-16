@@ -400,7 +400,7 @@ public class EventServiceImpl implements EventService {
         return eventDtos;
     }
 
-    final private EventFullDto toDto(final Event event) {
+    private EventFullDto toDto(final Event event) {
         final EventFullDto eventDto = eventMapper.toEventFullDto(event);
         final String eventUrl = String.format(EVENT_URL_FORMAT, eventDto.getId());
 
