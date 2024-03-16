@@ -450,7 +450,7 @@ public class EventServiceImpl implements EventService {
         getStatsRequest.setUnique(true);
 
         final List<StatItemDto> viewCountForEvent = statsClient.getStats(getStatsRequest);
-        if (viewCountForEvent != null && viewCountForEvent.size() == 1) {
+        if (viewCountForEvent.size() == 1) {
             eventDto.setViews(viewCountForEvent.get(0).getHits());
         }
     }
