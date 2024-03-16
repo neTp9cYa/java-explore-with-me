@@ -373,7 +373,7 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
     }
 
-    final private <EventDtoT extends EventBaseDto> List<EventDtoT> toDtos(
+    private <EventDtoT extends EventBaseDto> List<EventDtoT> toDtos(
         final Stream<Event> events,
         final Function<Event, EventDtoT> mapToDto) {
 
