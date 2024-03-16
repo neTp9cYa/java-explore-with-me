@@ -52,9 +52,9 @@ import ru.practicum.utils.pagination.FlexPageRequest;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
-    final static String EVENT_URL_FORMAT = "/events/%s";
-    final static LocalDateTime STAT_MIN_DATE_TIME = LocalDateTime.of(1, 1, 1, 0, 0, 0);
-    final static LocalDateTime STAT_MAX_DATE_TIME = LocalDateTime.of(9999, 1, 1, 0, 0, 0);
+    private static final String EVENT_URL_FORMAT = "/events/%s";
+    private static final LocalDateTime STAT_MIN_DATE_TIME = LocalDateTime.of(1, 1, 1, 0, 0, 0);
+    private static final LocalDateTime STAT_MAX_DATE_TIME = LocalDateTime.of(9999, 1, 1, 0, 0, 0);
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
