@@ -3,7 +3,6 @@ package ru.practicum.ewm.service.repository.specification;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
