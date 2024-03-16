@@ -373,18 +373,18 @@ public class EventServiceImpl implements EventService {
             .collect(Collectors.toList());
     }
 
-    final private <TEventDto extends EventBaseDto> List<TEventDto> toDtos(
+    final private <EventDtoT extends EventBaseDto> List<EventDtoT> toDtos(
         final Stream<Event> events,
-        final Function<Event, TEventDto> mapToDto) {
+        final Function<Event, EventDtoT> mapToDto) {
 
-        final List<TEventDto> eventDtos = new ArrayList<>();
-        final Map<Long, TEventDto> eventDtosById = new HashMap<>();
-        final Map<String, TEventDto> eventDtosByUrl = new HashMap<>();
+        final List<EventDtoT> eventDtos = new ArrayList<>();
+        final Map<Long, EventDtoT> eventDtosById = new HashMap<>();
+        final Map<String, EventDtoT> eventDtosByUrl = new HashMap<>();
         final List<Long> eventIds = new ArrayList<>();
         final List<String> eventUrls = new ArrayList<>();
 
         events.forEach(event -> {
-            final TEventDto eventDto = mapToDto.apply(event);
+            final EventDtoT eventDto = mapToDto.apply(event);
             final String eventUrl = String.format(EVENT_URL_FORMAT, eventDto.getId());
             eventDtos.add(eventDto);
             eventDtosById.put(eventDto.getId(), eventDto);
