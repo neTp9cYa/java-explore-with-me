@@ -36,7 +36,7 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto create(final CompilationCreateRequestDto compilationDto) {
         final Compilation creatingCompilation = compilationMapper.toCompilation(compilationDto);
 
-        if (compilationDto.getEvents().size() > 0) {
+        if (!compilationDto.getEvents().isEmpty()) {
             final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
             if (compilationDto.getEvents().size() != events.size()) {
                 throw new IllegalArgumentException();
@@ -56,11 +56,11 @@ public class CompilationServiceImpl implements CompilationService {
                 new NotFoundException(String.format("Compilation with id %d not found", compilationId)));
 
         if (compilationDto.getEvents() != null) {
-            if (compilationDto.getEvents().isEmpty() || compilationDto.getEvents().get().size() == 0) {
+            if (compilationDto.getEvents().isEmpty()) {
                 updatingCompilation.setEvents(new HashSet<>());
             } else {
-                final List<Event> events = eventRepository.findAllById(compilationDto.getEvents().get());
-                if (compilationDto.getEvents().get().size() != events.size()) {
+                final List<Event> events = eventRepository.findAllById(compilationDto.getEvents());
+                if (compilationDto.getEvents().size() != events.size()) {
                     throw new IllegalArgumentException();
                 }
                 updatingCompilation.setEvents(new HashSet<>(events));

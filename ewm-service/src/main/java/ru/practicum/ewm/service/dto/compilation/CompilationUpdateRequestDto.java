@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class CompilationUpdateRequestDto {
-    private Optional<List<Long>> events;
+    private List<Long> events;
     private Boolean pinned;
 
     @Size(min = 1, max = 50)
