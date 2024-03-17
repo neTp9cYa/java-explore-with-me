@@ -19,7 +19,6 @@ import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.request.GetEventsPublicRequest;
 import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
-import ru.practicum.stats.client.service.StatService;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
@@ -29,7 +28,6 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 public class EventPublicController {
 
     private final EventService eventService;
-    private final StatService statService;
 
     @GetMapping("/{eventId}")
     @LogInputOutputAnnotaion

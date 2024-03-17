@@ -14,7 +14,6 @@ import ru.practicum.ewm.service.dto.category.CategoryDto;
 import ru.practicum.ewm.service.service.api.CategoryService;
 import ru.practicum.ewm.service.service.request.GetCategoriesRequest;
 import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
-import ru.practicum.stats.client.service.StatService;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
@@ -24,7 +23,6 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 public class CategoryPublicController {
 
     private final CategoryService categoryService;
-    private final StatService statService;
 
     @GetMapping("/{categoryId}")
     @LogInputOutputAnnotaion
