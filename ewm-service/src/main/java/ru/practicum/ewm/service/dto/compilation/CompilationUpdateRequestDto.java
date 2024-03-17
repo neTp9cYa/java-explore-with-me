@@ -1,7 +1,6 @@
 package ru.practicum.ewm.service.dto.compilation;
 
 import java.util.List;
-import java.util.Optional;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 
