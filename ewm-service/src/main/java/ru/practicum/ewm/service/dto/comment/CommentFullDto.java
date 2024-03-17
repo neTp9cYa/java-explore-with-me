@@ -2,12 +2,16 @@ package ru.practicum.ewm.service.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
 import ru.practicum.ewm.service.dto.Location.LocationDto;
 import ru.practicum.ewm.service.dto.user.UserFullDto;
 import ru.practicum.ewm.service.dto.user.UserShortDto;
 import ru.practicum.ewm.service.model.CommentState;
 import ru.practicum.ewm.service.model.EventState;
 
+@Builder
+@Getter
 public class CommentFullDto {
     private Long id;
     private UserFullDto user;

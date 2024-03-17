@@ -22,7 +22,6 @@ public interface CommentService {
                                  final CommentUpdateAdminRequestDto commentUpdateAdminRequestDto);
 
     CommentFullDto getOwnComment(final long userId,
-                                 final long eventId,
                                  final long commentId);
 
     List<CommentFullDto> getOwnComments(final long userId,

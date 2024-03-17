@@ -50,12 +50,11 @@ public class CommentPrivateController {
         return commentService.updateByUser(userId, eventId, commentUpdateUserRequestDto);
     }
 
-    @GetMapping("/{eventId}")
+    @GetMapping("/{commentId}")
     @LogInputOutputAnnotaion
     public CommentFullDto getComment(@PathVariable final long userId,
-                                     @PathVariable final long eventId,
                                      @PathVariable final long commentId) {
-        return commentService.getOwnComment(userId, eventId, commentId);
+        return commentService.getOwnComment(userId, commentId);
     }
 
     @GetMapping

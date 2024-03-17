@@ -12,5 +12,5 @@ public class CommentUpdateAdminRequestDto {
     @Size(min = 20, max = 7000)
     private String message;
 
-    private CommentState state;
+    private CommentUpdateAdminStateAction stateAction;
 }
