@@ -2,12 +2,10 @@ package ru.practicum.ewm.service.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +36,7 @@ import ru.practicum.ewm.service.repository.CategoryRepository;
 import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.service.repository.UserRepository;
+import ru.practicum.ewm.service.repository.dto.ParticipationRequestCount;
 import ru.practicum.ewm.service.repository.specification.EventSpecification;
 import ru.practicum.ewm.service.service.api.EventService;
 import ru.practicum.ewm.service.service.request.GetEventsAdminRequest;
@@ -250,7 +249,7 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        return toDtos(eventPage.stream(), (event) -> eventMapper.toEventFullDto((event)));
+        return toDtos(eventPage.toList(), (event) -> eventMapper.toEventFullDto((event)));
     }
 
     @Override
@@ -272,7 +271,7 @@ public class EventServiceImpl implements EventService {
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
         final List<EventShortDto> eventDtos = toDtos(
-            eventPage.stream(),
+            eventPage.toList(),
             (event) -> eventMapper.toEventShortDto((event)));
 
         if (getEventsPublicRequest.getSort() == EventSort.VIEWS) {
@@ -294,7 +293,7 @@ public class EventServiceImpl implements EventService {
 
         final Page<Event> eventPage = eventRepository.findAll(specification, pageable);
 
-        return toDtos(eventPage.stream(), event -> eventMapper.toEventShortDto(event));
+        return toDtos(eventPage.toList(), event -> eventMapper.toEventShortDto(event));
     }
 
     @Override
@@ -374,84 +373,80 @@ public class EventServiceImpl implements EventService {
     }
 
     private <EventDtoT extends EventBaseDto> List<EventDtoT> toDtos(
-        final Stream<Event> events,
+        final List<Event> events,
         final Function<Event, EventDtoT> mapToDto) {
 
-        final List<EventDtoT> eventDtos = new ArrayList<>();
-        final Map<Long, EventDtoT> eventDtosById = new HashMap<>();
-        final Map<String, EventDtoT> eventDtosByUrl = new HashMap<>();
         final List<Long> eventIds = new ArrayList<>();
         final List<String> eventUrls = new ArrayList<>();
 
         events.forEach(event -> {
-            final EventDtoT eventDto = mapToDto.apply(event);
-            final String eventUrl = String.format(EVENT_URL_FORMAT, eventDto.getId());
-            eventDtos.add(eventDto);
-            eventDtosById.put(eventDto.getId(), eventDto);
-            eventDtosByUrl.put(eventUrl, eventDto);
-            eventIds.add(eventDto.getId());
-            eventUrls.add(eventUrl);
-
-            enrichWithConfirmedReqeusts(eventDtosById, eventIds);
-            enrichWithViews(eventDtosByUrl, eventUrls);
-
+            eventIds.add(event.getId());
+            eventUrls.add(getEventUrl(event.getId()));
         });
 
-        return eventDtos;
+        final Map<Long, Long> eventConfirmedReqeustCounts = getConfirmedReqeustCounts(eventIds);
+        final Map<String, Long> eventViews = getEventViews(eventUrls);
+
+        return events.stream()
+            .map(event -> {
+                final EventDtoT eventDto = mapToDto.apply(event);
+                eventDto.setConfirmedRequests(eventConfirmedReqeustCounts.getOrDefault(event.getId(), 0L));
+                eventDto.setViews(eventViews.getOrDefault(getEventUrl(event.getId()), 0L));
+                return eventDto;
+            })
+            .collect(Collectors.toList());
     }
 
     private EventFullDto toDto(final Event event) {
         final EventFullDto eventDto = eventMapper.toEventFullDto(event);
-        final String eventUrl = String.format(EVENT_URL_FORMAT, eventDto.getId());
-
-        enrichWithConfirmedReqeusts(eventDto);
-        enrichWithViews(eventDto, eventUrl);
-
+        eventDto.setConfirmedRequests(getConfirmedReqeustCounts(event.getId()));
+        eventDto.setViews(getEventViews(getEventUrl(event.getId())));
         return eventDto;
     }
 
-    private void enrichWithConfirmedReqeusts(final Map<Long, ? extends EventBaseDto> eventDtosById,
-                                             final List<Long> eventIds) {
+    private String getEventUrl(final long eventId) {
+        return String.format(EVENT_URL_FORMAT, eventId);
+    }
 
-        participationRequestRepository
+    private Map<Long, Long> getConfirmedReqeustCounts(final List<Long> eventIds) {
+        return participationRequestRepository
             .getCountForEventsByStatus(eventIds, ParticipationRequestStatus.CONFIRMED)
-            .forEach(participationRequestCount ->
-                eventDtosById
-                    .get(participationRequestCount.getEventId())
-                    .setConfirmedRequests(participationRequestCount.getCount()));
+            .stream()
+            .collect(Collectors.toMap(
+                participationRequestCount -> participationRequestCount.getEventId(),
+                participationRequestCount -> participationRequestCount.getCount()
+            ));
     }
 
-    private void enrichWithConfirmedReqeusts(final EventBaseDto eventDto) {
-        participationRequestRepository
-            .getCountForEventsByStatus(List.of(eventDto.getId()), ParticipationRequestStatus.CONFIRMED)
+    private long getConfirmedReqeustCounts(final long eventId) {
+        return participationRequestRepository
+            .getCountForEventsByStatus(List.of(eventId), ParticipationRequestStatus.CONFIRMED)
+            .stream()
+            .map(ParticipationRequestCount::getCount)
             .findFirst()
-            .ifPresent(participationRequestCount -> eventDto
-                .setConfirmedRequests(participationRequestCount.getCount()));
+            .orElseGet(() -> 0L);
     }
 
-    private void enrichWithViews(final Map<String, ? extends EventBaseDto> eventDtosByUrls,
-                                 final List<String> eventUrls) {
+    private Map<String, Long> getEventViews(final List<String> eventUrls) {
         final GetStatsRequest getStatsRequest = new GetStatsRequest(STAT_MIN_DATE_TIME, STAT_MAX_DATE_TIME);
         getStatsRequest.setUris(eventUrls);
         getStatsRequest.setUnique(true);
 
-        statsClient.getStats(getStatsRequest)
+        return statsClient.getStats(getStatsRequest)
             .stream()
-            .forEach(statItem -> {
-                eventDtosByUrls
-                    .get(statItem.getUri())
-                    .setViews(statItem.getHits());
-            });
+            .collect(Collectors.toMap(
+                statItem -> statItem.getUri(),
+                statItem -> statItem.getHits()));
     }
 
-    private void enrichWithViews(final EventBaseDto eventDto, final String eventUrl) {
+    private long getEventViews(final String eventUrl) {
         final GetStatsRequest getStatsRequest = new GetStatsRequest(STAT_MIN_DATE_TIME, STAT_MAX_DATE_TIME);
         getStatsRequest.setUris(List.of(eventUrl));
         getStatsRequest.setUnique(true);
 
         final List<StatItemDto> viewCountForEvent = statsClient.getStats(getStatsRequest);
-        if (viewCountForEvent.size() == 1) {
-            eventDto.setViews(viewCountForEvent.get(0).getHits());
-        }
+        return viewCountForEvent.size() == 1
+            ? viewCountForEvent.get(0).getHits()
+            : 0L;
     }
 }

@@ -17,6 +17,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "compilations")
@@ -37,7 +39,8 @@ public class Compilation {
     @Column(name = "pinned", nullable = false)
     private Boolean pinned;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
         name = "compilation_events",
         joinColumns = @JoinColumn(name = "compilation_id"),
