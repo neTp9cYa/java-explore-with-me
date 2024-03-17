@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
 import ru.practicum.ewm.service.model.Comment;
 import ru.practicum.ewm.service.model.CommentState;
+import ru.practicum.ewm.service.model.EventState;
 
 public class CommentSpecification {
 
@@ -49,5 +50,13 @@ public class CommentSpecification {
         }
         return (root, query, criteriaBuilder) ->
             root.get("state").in(states);
+    }
+
+    public static Specification<Comment> eventStates(final List<EventState> eventStates) {
+        if (eventStates == null || eventStates.isEmpty()) {
+            return null;
+        }
+        return (root, query, criteriaBuilder) ->
+            root.get("event").get("state").in(eventStates);
     }
 }

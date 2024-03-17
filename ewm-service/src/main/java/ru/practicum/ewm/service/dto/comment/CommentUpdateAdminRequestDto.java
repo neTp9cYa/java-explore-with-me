@@ -8,7 +8,6 @@ import ru.practicum.ewm.service.model.CommentState;
 @Getter
 public class CommentUpdateAdminRequestDto {
 
-    @NotBlank
     @Size(min = 20, max = 7000)
     private String message;
 

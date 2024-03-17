@@ -72,10 +72,11 @@ CREATE TABLE IF NOT EXISTS comments (
     user_id BIGINT NOT NULL,
     event_id BIGINT NOT NULL,
     message VARCHAR(7000) NOT NULL,
+    state VARCHAR(32) NOT NULL,
     created_on TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     published_on TIMESTAMP WITHOUT TIME ZONE,
 
     CONSTRAINT comments_pk PRIMARY KEY (id),
-    CONSTRAINT comments_fk_users FOREIGN KEY (user_id) REFERENCES users (id)
-    CONSTRAINT comments_fk_events FOREIGN KEY (event_id) REFERENCeS events (id),
+    CONSTRAINT comments_fk_users FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT comments_fk_events FOREIGN KEY (event_id) REFERENCeS events (id)
 );

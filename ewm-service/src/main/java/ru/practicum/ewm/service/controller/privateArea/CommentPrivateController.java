@@ -44,16 +44,15 @@ public class CommentPrivateController {
     @PatchMapping("/{commentId}")
     @LogInputOutputAnnotaion
     public CommentFullDto update(@PathVariable final long userId,
-                                 @PathVariable final long eventId,
                                  @PathVariable final long commentId,
                                  @RequestBody @Valid final CommentUpdateUserRequestDto commentUpdateUserRequestDto) {
-        return commentService.updateByUser(userId, eventId, commentUpdateUserRequestDto);
+        return commentService.updateByUser(userId, commentId, commentUpdateUserRequestDto);
     }
 
     @GetMapping("/{commentId}")
     @LogInputOutputAnnotaion
     public CommentFullDto getOwnComment(@PathVariable final long userId,
-                                     @PathVariable final long commentId) {
+                                        @PathVariable final long commentId) {
         return commentService.getOwnComment(userId, commentId);
     }
 

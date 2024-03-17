@@ -2,6 +2,7 @@ package ru.practicum.ewm.service.mapper.impl;
 
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.service.dto.comment.CommentCreateRequestDto;
 import ru.practicum.ewm.service.dto.comment.CommentFullDto;
 import ru.practicum.ewm.service.dto.comment.CommentShortDto;
@@ -12,6 +13,7 @@ import ru.practicum.ewm.service.model.CommentState;
 import ru.practicum.ewm.service.model.Event;
 import ru.practicum.ewm.service.model.User;
 
+@Component
 @RequiredArgsConstructor
 public class CommentMapperImpl implements CommentMapper {
 

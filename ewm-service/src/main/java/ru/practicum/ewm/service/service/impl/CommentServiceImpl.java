@@ -19,6 +19,7 @@ import ru.practicum.ewm.service.mapper.api.CommentMapper;
 import ru.practicum.ewm.service.model.Comment;
 import ru.practicum.ewm.service.model.CommentState;
 import ru.practicum.ewm.service.model.Event;
+import ru.practicum.ewm.service.model.EventState;
 import ru.practicum.ewm.service.model.User;
 import ru.practicum.ewm.service.repository.CommentRepository;
 import ru.practicum.ewm.service.repository.EventRepository;
@@ -51,6 +52,14 @@ public class CommentServiceImpl implements CommentService {
         final Event event = eventRepository.findById(eventId)
             .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
 
+        if (event.getState() != EventState.PUBLISHED) {
+            throw new IllegalArgumentException();
+        }
+
+        if (event.getUser().getId() == userId) {
+            throw new IllegalStateException();
+        }
+
         final Comment creatingComment = commentMapper.toComment(
             commentCreateRequestDto,
             user,
@@ -74,20 +83,24 @@ public class CommentServiceImpl implements CommentService {
             new NotFoundException(String.format("Comment with id %d not found", commentId));
         }
 
+        if (updatingComment.getEvent().getState() != EventState.PUBLISHED) {
+            throw new IllegalArgumentException();
+        }
+
         if (commentDto.getMessage() != null) {
             updatingComment.setMessage(commentDto.getMessage());
         }
 
         if (commentDto.getStateAction() != null) {
             switch (commentDto.getStateAction()) {
-                case PUBLISH_COMMENT:
+                case SEND_TO_REVIEW:
                     if (updatingComment.getState() != CommentState.CANCELED &&
                         updatingComment.getState() != CommentState.REJECTED) {
                         throw new IllegalStateException();
                     }
                     updatingComment.setState(CommentState.PENDING);
                     break;
-                case CANCEL_COMMENT:
+                case CANCEL_REVIEW:
                     if (updatingComment.getState() != CommentState.PENDING) {
                         throw new IllegalStateException();
                     }
@@ -167,9 +180,9 @@ public class CommentServiceImpl implements CommentService {
             getCommentsPrivateRequest.getFrom(),
             getCommentsPrivateRequest.getSize());
 
-        final Page<Comment> eventPage = commentRepository.findAll(specification, pageable);
+        final Page<Comment> commentPage = commentRepository.findAll(specification, pageable);
 
-        return eventPage.stream()
+        return commentPage.stream()
             .map(comment -> commentMapper.toCommentFullDto(comment))
             .collect(Collectors.toList());
     }
@@ -186,9 +199,9 @@ public class CommentServiceImpl implements CommentService {
             getCommentsAdminRequest.getFrom(),
             getCommentsAdminRequest.getSize());
 
-        final Page<Comment> eventPage = commentRepository.findAll(specification, pageable);
+        final Page<Comment> commentPage = commentRepository.findAll(specification, pageable);
 
-        return eventPage.stream()
+        return commentPage.stream()
             .map(comment -> commentMapper.toCommentFullDto(comment))
             .collect(Collectors.toList());
     }
@@ -197,16 +210,18 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentShortDto> getComments(final GetCommentsPublicRequest getCommentsPublicRequest) {
 
         final Specification<Comment> specification = Specification
-            .where(CommentSpecification.events(getCommentsPublicRequest.getEvents()));
+            .where(CommentSpecification.eventStates(List.of(EventState.PUBLISHED)))
+            .and(CommentSpecification.states(List.of(CommentState.PUBLISHED)))
+            .and(CommentSpecification.events(getCommentsPublicRequest.getEvents()));
 
         final Pageable pageable = FlexPageRequest.of(
             getCommentsPublicRequest.getFrom(),
             getCommentsPublicRequest.getSize(),
             Sort.by("publishedOn"));
 
-        final Page<Comment> eventPage = commentRepository.findAll(specification, pageable);
+        final Page<Comment> commentPage = commentRepository.findAll(specification, pageable);
 
-        return eventPage.stream()
+        return commentPage.stream()
             .map(comment -> commentMapper.toEventShortDto(comment))
             .collect(Collectors.toList());
     }

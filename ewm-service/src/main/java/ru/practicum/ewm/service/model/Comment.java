@@ -3,6 +3,8 @@ package ru.practicum.ewm.service.model;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -42,6 +44,7 @@ public class Comment {
     private String message;
 
     @Column(name = "state", nullable = false)
+    @Enumerated(EnumType.STRING)
     private CommentState state;
 
     @Column(name = "created_on", nullable = false)
