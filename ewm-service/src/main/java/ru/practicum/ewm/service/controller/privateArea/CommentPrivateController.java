@@ -52,7 +52,7 @@ public class CommentPrivateController {
 
     @GetMapping("/{commentId}")
     @LogInputOutputAnnotaion
-    public CommentFullDto getComment(@PathVariable final long userId,
+    public CommentFullDto getOwnComment(@PathVariable final long userId,
                                      @PathVariable final long commentId) {
         return commentService.getOwnComment(userId, commentId);
     }
