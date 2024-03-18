@@ -86,6 +86,12 @@ public class CommentServiceImpl implements CommentService {
             throw new IllegalArgumentException();
         }
 
+        if (updatingComment.getState() != CommentState.PENDING &&
+            updatingComment.getState() != CommentState.CANCELED &&
+            updatingComment.getState() != CommentState.REJECTED) {
+            throw new IllegalStateException();
+        }
+
         if (commentDto.getMessage() != null) {
             updatingComment.setMessage(commentDto.getMessage());
         }
