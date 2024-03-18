@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
-import ru.practicum.ewm.service.dto.user.UserFullDto;
 import ru.practicum.ewm.service.dto.user.UserShortDto;
-import ru.practicum.ewm.service.model.CommentState;
 
 @Builder
 @Getter

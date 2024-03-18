@@ -1,6 +1,5 @@
 package ru.practicum.ewm.service.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ import ru.practicum.ewm.service.repository.CommentRepository;
 import ru.practicum.ewm.service.repository.EventRepository;
 import ru.practicum.ewm.service.repository.UserRepository;
 import ru.practicum.ewm.service.repository.specification.CommentSpecification;
-import ru.practicum.ewm.service.repository.specification.EventSpecification;
 import ru.practicum.ewm.service.service.api.CommentService;
 import ru.practicum.ewm.service.service.request.GetCommentsAdminRequest;
 import ru.practicum.ewm.service.service.request.GetCommentsPrivateRequest;

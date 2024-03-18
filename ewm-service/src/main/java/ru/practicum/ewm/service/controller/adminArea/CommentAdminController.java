@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.comment.CommentFullDto;
 import ru.practicum.ewm.service.dto.comment.CommentUpdateAdminRequestDto;
-import ru.practicum.ewm.service.dto.event.EventFullDto;
 import ru.practicum.ewm.service.model.CommentState;
 import ru.practicum.ewm.service.service.api.CommentService;
 import ru.practicum.ewm.service.service.request.GetCommentsAdminRequest;

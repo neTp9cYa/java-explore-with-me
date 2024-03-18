@@ -14,6 +14,7 @@ public interface CommentService {
     CommentFullDto createByUser(final long userId,
                                 final long eventId,
                                 final CommentCreateRequestDto commentCreateRequestDto);
+
     CommentFullDto updateByUser(final long userId,
                                 final long commentId,
                                 final CommentUpdateUserRequestDto commentUpdateUserRequestDto);
