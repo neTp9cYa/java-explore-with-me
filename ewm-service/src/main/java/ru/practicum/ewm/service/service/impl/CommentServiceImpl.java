@@ -78,7 +78,7 @@ public class CommentServiceImpl implements CommentService {
             .orElseThrow(() -> new NotFoundException(String.format("Comment with id %d not found", commentId)));
 
         if (updatingComment.getUser().getId() != userId) {
-            new NotFoundException(String.format("Comment with id %d not found", commentId));
+            throw new NotFoundException(String.format("Comment with id %d not found", commentId));
         }
 
         if (updatingComment.getEvent().getState() != EventState.PUBLISHED) {
@@ -158,7 +158,7 @@ public class CommentServiceImpl implements CommentService {
             .orElseThrow(() -> new NotFoundException(String.format("Comment with id %d not found", commentId)));
 
         if (comment.getUser().getId() != userId) {
-            new NotFoundException(String.format("Comment with id %d not found", commentId));
+            throw new NotFoundException(String.format("Comment with id %d not found", commentId));
         }
 
         return commentMapper.toCommentFullDto(comment);
