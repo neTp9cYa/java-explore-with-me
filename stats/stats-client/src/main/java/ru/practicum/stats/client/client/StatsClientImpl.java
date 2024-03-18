@@ -1,4 +1,4 @@
-package ru.practicum.stats.client;
+package ru.practicum.stats.client.client;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -15,9 +15,9 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.stats.client.dto.StatsRequestDto;
+import ru.practicum.stats.client.request.GetStatsRequest;
 import ru.practicum.stats.dto.HitCreateDto;
-import ru.practicum.stats.dto.StatItemViewDto;
+import ru.practicum.stats.dto.StatItemDto;
 
 @Slf4j
 @Service
@@ -37,35 +37,35 @@ public class StatsClientImpl extends BaseClient implements StatsClient {
         post("/hit", hitCreateDto, Object.class);
     }
 
-    public List<StatItemViewDto> getStats(final StatsRequestDto statsRequestDto) throws HttpStatusCodeException {
-        if (statsRequestDto.getStart() == null) {
+    public List<StatItemDto> getStats(final GetStatsRequest getStatsRequest) throws HttpStatusCodeException {
+        if (getStatsRequest.getStart() == null) {
             throw new IllegalArgumentException("Start must be set");
         }
-        if (statsRequestDto.getEnd() == null) {
+        if (getStatsRequest.getEnd() == null) {
             throw new IllegalArgumentException("End must be set");
         }
 
         final Map<String, Object> parameters = new HashMap<>(Map.of(
-            "start", statsRequestDto.getStart().format(DATE_TIME_FORMATTER),
-            "end", statsRequestDto.getEnd().format(DATE_TIME_FORMATTER)
+            "start", getStatsRequest.getStart().format(DATE_TIME_FORMATTER),
+            "end", getStatsRequest.getEnd().format(DATE_TIME_FORMATTER)
         ));
 
-        if (statsRequestDto.getUris() != null) {
-            parameters.put("uris", String.join(",", statsRequestDto.getUris()));
+        if (getStatsRequest.getUris() != null) {
+            parameters.put("uris", String.join(",", getStatsRequest.getUris()));
         }
 
-        if (statsRequestDto.getUnique() != null) {
-            parameters.put("unique", statsRequestDto.getUnique());
+        if (getStatsRequest.getUnique() != null) {
+            parameters.put("unique", getStatsRequest.getUnique());
         }
 
         final String path = parameters.keySet().stream()
             .map(key -> String.format("%s={%s}", key, key))
             .collect(Collectors.joining("&", "stats?", ""));
 
-        final ResponseEntity<StatItemViewDto[]> response = get(path, parameters, StatItemViewDto[].class);
+        final ResponseEntity<StatItemDto[]> response = get(path, parameters, StatItemDto[].class);
 
         return response.getStatusCode().is2xxSuccessful()
             ? Arrays.asList(response.getBody())
-            : Collections.<StatItemViewDto>emptyList();
+            : Collections.<StatItemDto>emptyList();
     }
 }

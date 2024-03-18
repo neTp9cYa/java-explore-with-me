@@ -1,4 +1,4 @@
-package ru.practicum.stats.client;
+package ru.practicum.stats.client.client;
 
 import java.util.List;
 import java.util.Map;
@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -16,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RequiredArgsConstructor
-public class BaseClient {
+public abstract class BaseClient {
     protected final RestTemplate restTemplate;
 
     protected <ResponseT> ResponseEntity<ResponseT> get(
@@ -61,6 +62,18 @@ public class BaseClient {
                     responseType),
                 exception);
             return ResponseEntity.status(exception.getStatusCode()).build();
+        } catch (final Exception exception) {
+            log.error(
+                String.format(
+                    "Error occured on http request to stats-server " +
+                        "with method %s, path %s, parameters %s, requestBody %s, responseType %s",
+                    method,
+                    path,
+                    parameters,
+                    requestEntity.getBody(),
+                    responseType),
+                exception);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         if (!responseEntity.getStatusCode().is2xxSuccessful()) {

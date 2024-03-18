@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stats.dto.HitCreateDto;
-import ru.practicum.stats.dto.StatItemViewDto;
+import ru.practicum.stats.dto.StatItemDto;
 import ru.practicum.stats.server.model.Hit;
 import ru.practicum.stats.server.repository.HitRepository;
 
@@ -28,17 +28,17 @@ public class StatServiceImpl implements StatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<StatItemViewDto> getStats(final LocalDateTime start,
-                                          final LocalDateTime end,
-                                          final Optional<List<String>> urisOptional,
-                                          final Boolean unique) {
+    public List<StatItemDto> getStats(final LocalDateTime start,
+                                      final LocalDateTime end,
+                                      final Optional<List<String>> urisOptional,
+                                      final Boolean unique) {
 
         return unique
             ? (urisOptional.isEmpty()
-                ? hitRepository.getUniqueHitsStats(start, end, urisOptional.get())
-                : hitRepository.getUniqueHitsStats(start, end))
+            ? hitRepository.getUniqueHitsStats(start, end)
+            : hitRepository.getUniqueHitsStats(start, end, urisOptional.get()))
             : (urisOptional.isEmpty()
-                ? hitRepository.getHitsStats(start, end)
-                : hitRepository.getHitsStats(start, end, urisOptional.orElse(null)));
+            ? hitRepository.getHitsStats(start, end)
+            : hitRepository.getHitsStats(start, end, urisOptional.get()));
     }
 }
