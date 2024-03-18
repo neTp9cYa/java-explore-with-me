@@ -71,6 +71,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
@@ -400,6 +404,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 											"host": [
@@ -496,6 +504,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 											"host": [
@@ -529,6 +541,92 @@
 							"item": [
 								{
 									"name": "Получение не опубликованных комментариев",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user1 = await api.addUser(rnd.getUser());",
+													"        const category1 = await api.addCategory(rnd.getCategory());",
+													"        let event1 = await api.addEvent(user1.id, rnd.getEvent(category1.id));",
+													"        event1 = await api.publishEvent(event1.id);",
+													"",
+													"        const user2 = await api.addUser(rnd.getUser());",
+													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"       ",
+													"        pm.request.removeQueryParams(['events']);",
+													"        pm.request.addQueryParams([`events=` + event1.id]);",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {",
+													"    pm.response.to.be.ok;    ",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"const target = pm.response.json();",
+													"",
+													"pm.test(\"Комментарии должны отсутсвовать\", function () {",
+													"    pm.expect(target.length).to.equals(0);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/comments?events=0",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"comments"
+											],
+											"query": [
+												{
+													"key": "events",
+													"value": "0"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Добавление комментария не опубликованному событию",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -688,6 +786,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 											"host": [
@@ -784,6 +886,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 											"host": [
@@ -880,6 +986,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 											"host": [
@@ -976,6 +1086,10 @@
 									"request": {
 										"method": "POST",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
 											"host": [
@@ -1072,6 +1186,10 @@
 									"request": {
 										"method": "PATCH",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 											"host": [
@@ -1167,6 +1285,10 @@
 									"request": {
 										"method": "PATCH",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 											"host": [
@@ -1262,6 +1384,10 @@
 									"request": {
 										"method": "PATCH",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 											"host": [
@@ -1357,6 +1483,10 @@
 									"request": {
 										"method": "PATCH",
 										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}"
+										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 											"host": [
@@ -1985,6 +2115,11 @@
 		{
 			"key": "source",
 			"value": ""
+		},
+		{
+			"key": "request_body",
+			"value": "",
+			"type": "default"
 		}
 	]
 }
