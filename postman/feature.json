@@ -73,7 +73,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments",
@@ -406,7 +411,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
@@ -506,7 +516,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
@@ -788,7 +803,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
@@ -888,7 +908,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
@@ -988,7 +1013,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
@@ -1088,7 +1118,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
@@ -1188,7 +1223,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
@@ -1287,7 +1327,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
@@ -1386,7 +1431,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
@@ -1485,7 +1535,12 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{{request_body}}"
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
 										},
 										"url": {
 											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
