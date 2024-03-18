@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -133,6 +134,7 @@ public class CommentServiceImpl implements CommentService {
                         throw new IllegalStateException();
                     }
                     updatingComment.setState(CommentState.PUBLISHED);
+                    updatingComment.setPublishedOn(LocalDateTime.now());
                     break;
                 case REJECT_COMMENT:
                     if (updatingComment.getState() != CommentState.PENDING) {
