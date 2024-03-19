@@ -42,14 +42,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentFullDto createByUser(final long userId,
-                                       final long eventId,
-                                       final CommentCreateRequestDto commentCreateRequestDto) {
+                                       final CommentCreateRequestDto commentDto) {
 
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
 
-        final Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new NotFoundException(String.format("Event with id %d not found", eventId)));
+        final Event event = eventRepository.findById(commentDto.getEventId())
+            .orElseThrow(
+                () -> new NotFoundException(String.format("Event with id %d not found", commentDto.getEventId())));
 
         if (event.getState() != EventState.PUBLISHED) {
             throw new IllegalArgumentException();
@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         final Comment creatingComment = commentMapper.toComment(
-            commentCreateRequestDto,
+            commentDto,
             user,
             event,
             CommentState.PENDING);
@@ -72,14 +72,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentFullDto updateByUser(final long userId,
-                                       final long commentId,
                                        final CommentUpdateUserRequestDto commentDto) {
 
-        final Comment updatingComment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new NotFoundException(String.format("Comment with id %d not found", commentId)));
+        final Comment updatingComment = commentRepository.findById(commentDto.getId())
+            .orElseThrow(
+                () -> new NotFoundException(String.format("Comment with id %d not found", commentDto.getId())));
 
         if (updatingComment.getUser().getId() != userId) {
-            throw new NotFoundException(String.format("Comment with id %d not found", commentId));
+            throw new NotFoundException(String.format("Comment with id %d not found", commentDto.getId()));
         }
 
         if (updatingComment.getEvent().getState() != EventState.PUBLISHED) {

@@ -36,17 +36,15 @@ public class CommentPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     @LogInputOutputAnnotaion
     public CommentFullDto create(@PathVariable final long userId,
-                                 @RequestParam final long eventId,
                                  @RequestBody @Valid final CommentCreateRequestDto commentCreateRequestDto) {
-        return commentService.createByUser(userId, eventId, commentCreateRequestDto);
+        return commentService.createByUser(userId, commentCreateRequestDto);
     }
 
     @PatchMapping("/{commentId}")
     @LogInputOutputAnnotaion
     public CommentFullDto update(@PathVariable final long userId,
-                                 @PathVariable final long commentId,
                                  @RequestBody @Valid final CommentUpdateUserRequestDto commentUpdateUserRequestDto) {
-        return commentService.updateByUser(userId, commentId, commentUpdateUserRequestDto);
+        return commentService.updateByUser(userId, commentUpdateUserRequestDto);
     }
 
     @GetMapping("/{commentId}")
