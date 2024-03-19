@@ -49,19 +49,19 @@ public class CommentPrivateController {
 
     @GetMapping("/{commentId}")
     @LogInputOutputAnnotaion
-    public CommentFullDto getOwnComment(@PathVariable final long userId,
-                                        @PathVariable final long commentId) {
+    public CommentFullDto get(@PathVariable final long userId,
+                              @PathVariable final long commentId) {
         return commentService.getOwnComment(userId, commentId);
     }
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<CommentFullDto> getOwnComments(@PathVariable final long userId,
-                                               @RequestParam(required = false) final List<Long> comments,
-                                               @RequestParam(required = false) final List<Long> events,
-                                               @RequestParam(required = false) final List<CommentState> states,
-                                               @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
-                                               @RequestParam(defaultValue = "10") @Positive final int size) {
+    public List<CommentFullDto> getAll(@PathVariable final long userId,
+                                       @RequestParam(required = false) final List<Long> comments,
+                                       @RequestParam(required = false) final List<Long> events,
+                                       @RequestParam(required = false) final List<CommentState> states,
+                                       @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
+                                       @RequestParam(defaultValue = "10") @Positive final int size) {
         final GetCommentsPrivateRequest getCommentsPrivateRequest = GetCommentsPrivateRequest.builder()
             .comments(comments)
             .events(events)

@@ -35,7 +35,7 @@ public class CommentAdminController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    public List<CommentFullDto> getComments(
+    public List<CommentFullDto> getAll(
         @RequestParam(required = false) final List<Long> comments,
         @RequestParam(required = false) final List<Long> users,
         @RequestParam(required = false) final List<Long> events,
