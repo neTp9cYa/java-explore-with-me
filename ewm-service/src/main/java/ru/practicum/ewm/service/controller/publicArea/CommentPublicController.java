@@ -25,7 +25,6 @@ public class CommentPublicController {
 
     @GetMapping
     @LogInputOutputAnnotaion
-    @CollectRequestStatisticAnnotaion
     public List<CommentShortDto> getAll(
         @RequestParam(required = false) final List<Long> events,
         @RequestParam(defaultValue = "0") @PositiveOrZero final long from,
