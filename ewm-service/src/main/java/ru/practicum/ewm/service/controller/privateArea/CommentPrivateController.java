@@ -40,7 +40,7 @@ public class CommentPrivateController {
         return commentService.create(userId, commentCreateRequestDto);
     }
 
-    @PatchMapping("/{commentId}")
+    @PatchMapping
     @LogInputOutputAnnotaion
     public CommentFullDto update(@PathVariable final long userId,
                                  @RequestBody @Valid final CommentUpdateUserRequestDto commentUpdateUserRequestDto) {
