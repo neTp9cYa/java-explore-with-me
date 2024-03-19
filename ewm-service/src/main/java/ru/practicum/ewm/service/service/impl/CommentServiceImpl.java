@@ -122,12 +122,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentFullDto updateByAdmin(final long commentId,
-                                        final CommentUpdateAdminRequestDto commentDto) {
+    public CommentFullDto updateByAdmin(final CommentUpdateAdminRequestDto commentDto) {
 
 
-        final Comment updatingComment = commentRepository.findById(commentId)
-            .orElseThrow(() -> new NotFoundException(String.format("Comment with id %d not found", commentId)));
+        final Comment updatingComment = commentRepository.findById(commentDto.getId())
+            .orElseThrow(
+                () -> new NotFoundException(String.format("Comment with id %d not found", commentDto.getId())));
 
         if (commentDto.getMessage() != null) {
             updatingComment.setMessage(commentDto.getMessage());

@@ -19,8 +19,7 @@ public interface CommentService {
                                 final long commentId,
                                 final CommentUpdateUserRequestDto commentUpdateUserRequestDto);
 
-    CommentFullDto updateByAdmin(final long commentId,
-                                 final CommentUpdateAdminRequestDto commentUpdateAdminRequestDto);
+    CommentFullDto updateByAdmin(final CommentUpdateAdminRequestDto commentUpdateAdminRequestDto);
 
     CommentFullDto getOwnComment(final long userId,
                                  final long commentId);

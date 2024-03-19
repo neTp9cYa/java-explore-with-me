@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,11 +27,10 @@ public class CommentAdminController {
 
     private final CommentService commentService;
 
-    @PatchMapping("/{commentId}")
+    @PatchMapping
     @LogInputOutputAnnotaion
-    public CommentFullDto update(@PathVariable final int commentId,
-                                 @RequestBody @Valid final CommentUpdateAdminRequestDto commentDto) {
-        return commentService.updateByAdmin(commentId, commentDto);
+    public CommentFullDto update(@RequestBody @Valid final CommentUpdateAdminRequestDto commentDto) {
+        return commentService.updateByAdmin(commentDto);
     }
 
     @GetMapping
