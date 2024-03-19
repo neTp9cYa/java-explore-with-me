@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.service.dto.comment.CommentShortDto;
 import ru.practicum.ewm.service.service.api.CommentService;
 import ru.practicum.ewm.service.service.request.GetCommentsPublicRequest;
-import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
