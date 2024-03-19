@@ -11,13 +11,13 @@ import ru.practicum.ewm.service.service.request.GetCommentsPrivateRequest;
 import ru.practicum.ewm.service.service.request.GetCommentsPublicRequest;
 
 public interface CommentService {
-    CommentFullDto createByUser(final long userId,
-                                final CommentCreateRequestDto commentCreateRequestDto);
+    CommentFullDto create(final long userId,
+                          final CommentCreateRequestDto commentCreateRequestDto);
 
-    CommentFullDto updateByUser(final long userId,
-                                final CommentUpdateUserRequestDto commentUpdateUserRequestDto);
+    CommentFullDto update(final long userId,
+                          final CommentUpdateUserRequestDto commentUpdateUserRequestDto);
 
-    CommentFullDto updateByAdmin(final CommentUpdateAdminRequestDto commentUpdateAdminRequestDto);
+    CommentFullDto update(final CommentUpdateAdminRequestDto commentUpdateAdminRequestDto);
 
     CommentFullDto getOwnComment(final long userId,
                                  final long commentId);

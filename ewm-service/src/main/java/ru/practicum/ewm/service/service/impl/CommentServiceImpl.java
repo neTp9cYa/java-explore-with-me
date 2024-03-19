@@ -41,8 +41,8 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
 
     @Override
-    public CommentFullDto createByUser(final long userId,
-                                       final CommentCreateRequestDto commentDto) {
+    public CommentFullDto create(final long userId,
+                                 final CommentCreateRequestDto commentDto) {
 
         final User user = userRepository.findById(userId)
             .orElseThrow(() -> new NotFoundException(String.format("User with id %d not found", userId)));
@@ -71,8 +71,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentFullDto updateByUser(final long userId,
-                                       final CommentUpdateUserRequestDto commentDto) {
+    public CommentFullDto update(final long userId,
+                                 final CommentUpdateUserRequestDto commentDto) {
 
         final Comment updatingComment = commentRepository.findById(commentDto.getId())
             .orElseThrow(
@@ -122,7 +122,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentFullDto updateByAdmin(final CommentUpdateAdminRequestDto commentDto) {
+    public CommentFullDto update(final CommentUpdateAdminRequestDto commentDto) {
 
 
         final Comment updatingComment = commentRepository.findById(commentDto.getId())

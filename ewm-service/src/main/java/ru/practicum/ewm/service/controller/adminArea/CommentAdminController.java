@@ -30,7 +30,7 @@ public class CommentAdminController {
     @PatchMapping
     @LogInputOutputAnnotaion
     public CommentFullDto update(@RequestBody @Valid final CommentUpdateAdminRequestDto commentDto) {
-        return commentService.updateByAdmin(commentDto);
+        return commentService.update(commentDto);
     }
 
     @GetMapping
