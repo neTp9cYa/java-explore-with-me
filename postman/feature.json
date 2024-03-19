@@ -12,98 +12,6 @@
 					"name": "Comment",
 					"item": [
 						{
-							"name": "Required query params",
-							"item": [
-								{
-									"name": "Добавление  комментария без указания события",
-									"event": [
-										{
-											"listen": "prerequest",
-											"script": {
-												"exec": [
-													"const main = async () => {",
-													"    const api = new API(pm);",
-													"    const rnd = new RandomUtils();",
-													"",
-													"    try {",
-													"        const submittedUser = await api.addUser(rnd.getUser());",
-													"        pm.request.removeQueryParams(['eventId']);",
-													"        pm.collectionVariables.set('uid', submittedUser.id);",
-													"    } catch(err) {",
-													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
-													"    }",
-													"};",
-													"",
-													"const interval = setInterval(() => {}, 1000);",
-													"",
-													"setTimeout(async () => ",
-													"    {",
-													"        try {",
-													"            // выполняем наш скрипт",
-													"            await main();",
-													"        } catch (e) {",
-													"            console.error(e);",
-													"        } finally {",
-													"            clearInterval(interval);",
-													"        }",
-													"    },  ",
-													"    100 ",
-													");"
-												],
-												"type": "text/javascript"
-											}
-										},
-										{
-											"listen": "test",
-											"script": {
-												"exec": [
-													"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {",
-													"    pm.response.to.be.badRequest;    ",
-													"    pm.response.to.be.withBody;",
-													"    pm.response.to.be.json;",
-													"});",
-													""
-												],
-												"type": "text/javascript"
-											}
-										}
-									],
-									"request": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{{request_body}}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"users",
-												":userId",
-												"comments"
-											],
-											"variable": [
-												{
-													"key": "userId",
-													"value": "{{uid}}",
-													"description": "(Required) id текущего пользователя"
-												}
-											]
-										}
-									},
-									"response": []
-								}
-							]
-						},
-						{
 							"name": "Unrequired query params",
 							"item": [
 								{
@@ -126,7 +34,7 @@
 													"        const user2 = await api.addUser(rnd.getUser());",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"    } catch(err) {",
 													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 													"    }",
@@ -207,7 +115,7 @@
 													"        const user2 = await api.addUser(rnd.getUser());",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        ",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"    } catch(err) {",
 													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 													"    }",
@@ -281,7 +189,7 @@
 													"        const user2 = await api.addUser(rnd.getUser());",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        ",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"    } catch(err) {",
 													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
 													"    }",
@@ -340,7 +248,7 @@
 							"name": "Required params in body",
 							"item": [
 								{
-									"name": "Добавление комментария без сообщения",
+									"name": "Добавление комментария без события",
 									"event": [
 										{
 											"listen": "prerequest",
@@ -357,7 +265,106 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = rnd.getComment();",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
+													"        ",
+													"        pm.collectionVariables.set(\"uid\", user2.id);",
+													"        pm.request.removeQueryParams(['eventId']);",
+													"        pm.request.addQueryParams([`eventId=` + event1.id]);",
+													"        delete comment2[\"eventId\"];",
+													"        pm.request.body.update({",
+													"            mode: 'raw',",
+													"            raw: JSON.stringify(comment2),",
+													"            options: { raw: { language: 'json' } }",
+													"        });",
+													"    } catch(err) {",
+													"        console.error(\"Ошибка при подготовке тестовых данных.\", err);",
+													"    }",
+													"};",
+													"",
+													"const interval = setInterval(() => {}, 1000);",
+													"",
+													"setTimeout(async () => ",
+													"    {",
+													"        try {",
+													"            await main();",
+													"        } catch (e) {",
+													"            console.error(e);",
+													"        } finally {",
+													"            clearInterval(interval);",
+													"        }",
+													"    },  ",
+													"    100 ",
+													");"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {",
+													"    pm.response.to.be.badRequest;    ",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													""
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{{request_body}}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/users/:userId/comments",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"users",
+												":userId",
+												"comments"
+											],
+											"variable": [
+												{
+													"key": "userId",
+													"value": "{{uid}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Добавление комментария без сообщения Copy",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"const main = async () => {",
+													"    const api = new API(pm);",
+													"    const rnd = new RandomUtils();",
+													"",
+													"    try {",
+													"        const user1 = await api.addUser(rnd.getUser());",
+													"        const category1 = await api.addCategory(rnd.getCategory());",
+													"        let event1 = await api.addEvent(user1.id, rnd.getEvent(category1.id));",
+													"        event1 = await api.publishEvent(event1.id);",
+													"",
+													"        const user2 = await api.addUser(rnd.getUser());",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.request.removeQueryParams(['eventId']);",
@@ -419,7 +426,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
@@ -427,12 +434,6 @@
 												"users",
 												":userId",
 												"comments"
-											],
-											"query": [
-												{
-													"key": "eventId",
-													"value": "0"
-												}
 											],
 											"variable": [
 												{
@@ -462,7 +463,7 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = rnd.getComment();",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
 													"",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.request.removeQueryParams(['eventId']);",
@@ -524,7 +525,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
@@ -532,12 +533,6 @@
 												"users",
 												":userId",
 												"comments"
-											],
-											"query": [
-												{
-													"key": "eventId",
-													"value": "0"
-												}
 											],
 											"variable": [
 												{
@@ -572,7 +567,7 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"       ",
 													"        pm.request.removeQueryParams(['events']);",
 													"        pm.request.addQueryParams([`events=` + event1.id]);",
@@ -663,7 +658,7 @@
 													"        pm.request.addQueryParams([`eventId=` + event1.id]);",
 													"        pm.request.body.update({",
 													"            mode: 'raw',",
-													"            raw: JSON.stringify(rnd.getComment()),",
+													"            raw: JSON.stringify(rnd.getComment(undefined, event1.id)),",
 													"            options: { raw: { language: 'json' } }",
 													"        });",
 													"    } catch(err) {",
@@ -717,7 +712,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
@@ -725,12 +720,6 @@
 												"users",
 												":userId",
 												"comments"
-											],
-											"query": [
-												{
-													"key": "eventId",
-													"value": "0"
-												}
 											],
 											"variable": [
 												{
@@ -765,7 +754,7 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = rnd.getComment();",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.request.removeQueryParams(['eventId']);",
@@ -870,7 +859,7 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = rnd.getComment();",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.request.removeQueryParams(['eventId']);",
@@ -975,7 +964,7 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = rnd.getComment();",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.request.removeQueryParams(['eventId']);",
@@ -1080,7 +1069,7 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = rnd.getComment();",
+													"        const comment2 = rnd.getComment(undefined, event1.id);",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.request.removeQueryParams(['eventId']);",
@@ -1185,13 +1174,14 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.collectionVariables.set(\"commentId\", comment2.id);",
 													"        pm.request.body.update({",
 													"            mode: 'raw',",
 													"            raw: JSON.stringify({",
+													"                id: comment2.id,",
 													"                message : rnd.getWord(19)",
 													"            }),",
 													"            options: { raw: { language: 'json' } }",
@@ -1247,24 +1237,19 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"users",
 												":userId",
-												"comments",
-												":commentId"
+												"comments"
 											],
 											"variable": [
 												{
 													"key": "userId",
 													"value": "{{uid}}"
-												},
-												{
-													"key": "commentId",
-													"value": "{{commentId}}"
 												}
 											]
 										}
@@ -1289,13 +1274,14 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.collectionVariables.set(\"commentId\", comment2.id);",
 													"        pm.request.body.update({",
 													"            mode: 'raw',",
 													"            raw: JSON.stringify({",
+													"                id: comment2.id,",
 													"                message : rnd.getWord(20)",
 													"            }),",
 													"            options: { raw: { language: 'json' } }",
@@ -1351,24 +1337,19 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"users",
 												":userId",
-												"comments",
-												":commentId"
+												"comments"
 											],
 											"variable": [
 												{
 													"key": "userId",
 													"value": "{{uid}}"
-												},
-												{
-													"key": "commentId",
-													"value": "{{commentId}}"
 												}
 											]
 										}
@@ -1393,13 +1374,14 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.collectionVariables.set(\"commentId\", comment2.id);",
 													"        pm.request.body.update({",
 													"            mode: 'raw',",
 													"            raw: JSON.stringify({",
+													"                id: comment2.id,",
 													"                message : rnd.getWord(7000)",
 													"            }),",
 													"            options: { raw: { language: 'json' } }",
@@ -1455,24 +1437,19 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"users",
 												":userId",
-												"comments",
-												":commentId"
+												"comments"
 											],
 											"variable": [
 												{
 													"key": "userId",
 													"value": "{{uid}}"
-												},
-												{
-													"key": "commentId",
-													"value": "{{commentId}}"
 												}
 											]
 										}
@@ -1497,13 +1474,14 @@
 													"        event1 = await api.publishEvent(event1.id);",
 													"        ",
 													"        const user2 = await api.addUser(rnd.getUser());",
-													"        const comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());",
+													"        const comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));",
 													"        ",
 													"        pm.collectionVariables.set(\"uid\", user2.id);",
 													"        pm.collectionVariables.set(\"commentId\", comment2.id);",
 													"        pm.request.body.update({",
 													"            mode: 'raw',",
 													"            raw: JSON.stringify({",
+													"                id: comment2.id,",
 													"                message : rnd.getWord(7001)",
 													"            }),",
 													"            options: { raw: { language: 'json' } }",
@@ -1559,24 +1537,19 @@
 											}
 										},
 										"url": {
-											"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
+											"raw": "{{baseUrl}}/users/:userId/comments",
 											"host": [
 												"{{baseUrl}}"
 											],
 											"path": [
 												"users",
 												":userId",
-												"comments",
-												":commentId"
+												"comments"
 											],
 											"variable": [
 												{
 													"key": "userId",
 													"value": "{{uid}}"
-												},
-												{
-													"key": "commentId",
-													"value": "{{commentId}}"
 												}
 											]
 										}
@@ -1608,7 +1581,7 @@
 													"\r",
 													"        const user2 = await api.addUser(rnd.getUser());\r",
 													"        for (let i = 0; i < 11; i++){\r",
-													"            await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+													"            await api.addComment(user2.id, rnd.getComment(undefined, event1.id));\r",
 													"        }\r",
 													"\r",
 													"        await pm.sendRequest({\r",
@@ -1753,7 +1726,7 @@
 													"\r",
 													"        const user2 = await api.addUser(rnd.getUser());\r",
 													"        for (let i = 0; i < 11; i++){\r",
-													"            await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+													"            await api.addComment(user2.id, rnd.getComment(undefined,  event1.id));\r",
 													"        }\r",
 													"\r",
 													"        pm.collectionVariables.set(\"uid\", user2.id);\r",
@@ -1862,7 +1835,7 @@
 													"\r",
 													"        const user2 = await api.addUser(rnd.getUser());\r",
 													"        for (let i = 0; i < 11; i++){\r",
-													"            const comment = await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+													"            const comment = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));\r",
 													"            await api.publishComment(comment.id);\r",
 													"        }\r",
 													"\r",
@@ -2016,13 +1989,14 @@
 											"        event1 = await api.publishEvent(event1.id);\r",
 											"\r",
 											"        const user2 = await api.addUser(rnd.getUser());\r",
-											"        let comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+											"        let comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));\r",
 											"        comment2 = await api.publishComment(comment2.id);\r",
 											"\r",
 											"        pm.collectionVariables.set(\"commentId\", comment2.id)\r",
 											"        pm.request.body.update({\r",
 											"            mode: 'raw',\r",
 											"            raw: JSON.stringify({\r",
+											"                id: comment2.id,\r",
 											"                stateAction : \"PUBLISH_COMMENT\"\r",
 											"            }),\r",
 											"            options: { raw: { language: 'json' } }\r",
@@ -2083,20 +2057,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/admin/comments/:commentId",
+									"raw": "{{baseUrl}}/admin/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"admin",
-										"comments",
-										":commentId"
-									],
-									"variable": [
-										{
-											"key": "commentId",
-											"value": "{{commentId}}"
-										}
+										"comments"
 									]
 								},
 								"description": "Обратите внимание:\n - дата начала события должна быть не ранее чем за час от даты публикации.\n- событие должно быть в состоянии ожидания публикации"
@@ -2121,13 +2088,14 @@
 											"        event1 = await api.publishEvent(event1.id);\r",
 											"\r",
 											"        const user2 = await api.addUser(rnd.getUser());\r",
-											"        let comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+											"        let comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));\r",
 											"        comment2 = await api.rejectComment(comment2.id);\r",
 											"\r",
 											"        pm.collectionVariables.set(\"commentId\", comment2.id)\r",
 											"        pm.request.body.update({\r",
 											"            mode: 'raw',\r",
 											"            raw: JSON.stringify({\r",
+											"                id: comment2.id,\r",
 											"                stateAction : \"PUBLISH_COMMENT\"\r",
 											"            }),\r",
 											"            options: { raw: { language: 'json' } }\r",
@@ -2183,20 +2151,13 @@
 									"raw": "{{request_body}}"
 								},
 								"url": {
-									"raw": "{{baseUrl}}/admin/comments/:commentId",
+									"raw": "{{baseUrl}}/admin/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"admin",
-										"comments",
-										":commentId"
-									],
-									"variable": [
-										{
-											"key": "commentId",
-											"value": "{{commentId}}"
-										}
+										"comments"
 									]
 								},
 								"description": "Обратите внимание:\n - дата начала события должна быть не ранее чем за час от даты публикации.\n- событие должно быть в состоянии ожидания публикации"
@@ -2221,13 +2182,14 @@
 											"        event1 = await api.publishEvent(event1.id);\r",
 											"\r",
 											"        const user2 = await api.addUser(rnd.getUser());\r",
-											"        let comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+											"        let comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));\r",
 											"        comment2 = await api.publishComment(comment2.id);\r",
 											"\r",
 											"        pm.collectionVariables.set(\"commentId\", comment2.id)\r",
 											"        pm.request.body.update({\r",
 											"            mode: 'raw',\r",
 											"            raw: JSON.stringify({\r",
+											"                id: comment2.id,\r",
 											"                stateAction : \"REJECT_COMMENT\"\r",
 											"            }),\r",
 											"            options: { raw: { language: 'json' } }\r",
@@ -2288,20 +2250,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/admin/comments/:commentId",
+									"raw": "{{baseUrl}}/admin/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"admin",
-										"comments",
-										":commentId"
-									],
-									"variable": [
-										{
-											"key": "commentId",
-											"value": "{{commentId}}"
-										}
+										"comments"
 									]
 								},
 								"description": "Обратите внимание:\n - дата начала события должна быть не ранее чем за час от даты публикации.\n- событие должно быть в состоянии ожидания публикации"
@@ -2326,11 +2281,9 @@
 											"        event1 = await api.publishEvent(event1.id);\r",
 											"\r",
 											"        pm.collectionVariables.set(\"uid\", user1.id);\r",
-											"        pm.request.removeQueryParams(['eventId']);\r",
-											"        pm.request.addQueryParams([`eventId=` + event1.id]);\r",
 											"        pm.request.body.update({\r",
 											"            mode: 'raw',\r",
-											"            raw: JSON.stringify(rnd.getComment()),\r",
+											"            raw: JSON.stringify(rnd.getComment(undefined, event1.id)),\r",
 											"            options: { raw: { language: 'json' } }\r",
 											"        });\r",
 											"    } catch(err) {\r",
@@ -2389,7 +2342,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/users/:userId/comments?eventId=0",
+									"raw": "{{baseUrl}}/users/:userId/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -2397,12 +2350,6 @@
 										"users",
 										":userId",
 										"comments"
-									],
-									"query": [
-										{
-											"key": "eventId",
-											"value": "0"
-										}
 									],
 									"variable": [
 										{
@@ -2433,7 +2380,7 @@
 											"        event1 = await api.publishEvent(event1.id);\r",
 											"\r",
 											"        const user2 = await api.addUser(rnd.getUser());\r",
-											"        let comment2 = await api.addComment(user2.id, event1.id, rnd.getComment());\r",
+											"        let comment2 = await api.addComment(user2.id, rnd.getComment(undefined, event1.id));\r",
 											"        comment2 = await api.publishComment(comment2.id);\r",
 											"\r",
 											"        pm.collectionVariables.set(\"uid\", user2.id);\r",
@@ -2441,6 +2388,7 @@
 											"        pm.request.body.update({\r",
 											"            mode: 'raw',\r",
 											"            raw: JSON.stringify({\r",
+											"                id: comment2.id,\r",
 											"                message : rnd.getWord(100)\r",
 											"            }),\r",
 											"            options: { raw: { language: 'json' } }\r",
@@ -2501,24 +2449,19 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
+									"raw": "{{baseUrl}}/users/:userId/comments",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"users",
 										":userId",
-										"comments",
-										":commentId"
+										"comments"
 									],
 									"variable": [
 										{
 											"key": "userId",
 											"value": "{{uid}}"
-										},
-										{
-											"key": "commentId",
-											"value": "{{commentId}}"
 										}
 									]
 								},
@@ -2551,7 +2494,7 @@
 									"        event1 = await api.publishEvent(event1.id);\r",
 									"\r",
 									"        const user2 = await api.addUser(rnd.getUser());\r",
-									"        const comment2 = rnd.getComment();\r",
+									"        const comment2 = rnd.getComment(undefined, event1.id);\r",
 									"\r",
 									"        pm.collectionVariables.set(\"uid\", user2.id);\r",
 									"        pm.request.removeQueryParams(['eventId']);\r",
@@ -2701,16 +2644,16 @@
 					"        return this.patch('/admin/events/' + eventId, {stateAction: \"REJECT_EVENT\"}, \"Ошибка при отмене события\", verbose);",
 					"    }",
 					"",
-					"    async addComment(userId, eventId, comment, verbose=null) {",
-					"        return this.post(\"/users/\" + userId + \"/comments?eventId=\" + eventId, comment, \"Ошибка при добавлении нового комментария: \", verbose);",
+					"    async addComment(userId, comment, verbose=null) {",
+					"        return this.post(\"/users/\" + userId + \"/comments\", comment, \"Ошибка при добавлении нового комментария: \", verbose);",
 					"    }",
 					"    ",
-					"    async publishComment(commentId, verbose=null) {",
-					"        return this.patch('/admin/comments/' + commentId, {stateAction: \"PUBLISH_COMMENT\"}, \"Ошибка при публикации события\", verbose);",
+					"    async publishComment(id, verbose=null) {",
+					"        return this.patch('/admin/comments', {id: id, stateAction: \"PUBLISH_COMMENT\"}, \"Ошибка при публикации события\", verbose);",
 					"    }",
 					"    ",
-					"    async rejectComment(commentId, verbose=null) {",
-					"        return this.patch('/admin/comments/' + commentId, {stateAction: \"REJECT_COMMENT\"}, \"Ошибка при отмене события\", verbose);",
+					"    async rejectComment(id, verbose=null) {",
+					"        return this.patch('/admin/comments', {id: id, stateAction: \"REJECT_COMMENT\"}, \"Ошибка при отмене события\", verbose);",
 					"    }",
 					"",
 					"    async get(path, body = null, errorText = \"Ошибка при выполнении get-запроса: \", verbose=null) {",
@@ -2801,10 +2744,17 @@
 					"        }",
 					"    }",
 					"",
-					"    getComment() {",
-					"        return {",
+					"    getComment(id, eventId) {",
+					"        const comment = {",
 					"            message: pm.variables.replaceIn('{{$randomLoremParagraphs}}'),",
 					"        };",
+					"        if (id !== undefined) {",
+					"            comment.id = id;",
+					"        }",
+					"        if (eventId !== undefined) {",
+					"            comment.eventId = eventId;",
+					"        }",
+					"        return comment;",
 					"    }",
 					"",
 					"",
