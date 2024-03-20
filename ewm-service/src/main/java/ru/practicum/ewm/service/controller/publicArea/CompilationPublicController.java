@@ -14,7 +14,6 @@ import ru.practicum.ewm.service.dto.compilation.CompilationDto;
 import ru.practicum.ewm.service.service.api.CompilationService;
 import ru.practicum.ewm.service.service.request.GetCompilationsRequest;
 import ru.practicum.stats.client.aspect.CollectRequestStatisticAnnotaion;
-import ru.practicum.stats.client.service.StatService;
 import ru.practicum.utils.log.LogInputOutputAnnotaion;
 
 @RestController
@@ -24,7 +23,6 @@ import ru.practicum.utils.log.LogInputOutputAnnotaion;
 public class CompilationPublicController {
 
     private final CompilationService compilationService;
-    private final StatService statService;
 
     @GetMapping("/{compilationId}")
     @LogInputOutputAnnotaion
